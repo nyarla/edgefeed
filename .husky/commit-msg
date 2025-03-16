@@ -1,0 +1,2 @@
+cat $1 | bun run textlint -- -c "$(dirname "${0}")/../textlintrc.yml" --stdin --stdin-filename "commit-msg.txt"
+bun run commitlint -- --edit $1
