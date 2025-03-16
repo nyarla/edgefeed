@@ -1,0 +1,29 @@
+rules:
+  # Expression of Text
+  alex: true
+  "@textlint-rule/no-duplicate-abbr": true
+  no-start-duplicated-conjunction:
+    max: 2
+  "@textlint-rule/textlint-rule-no-unmatched-pair": true
+  rousseau:
+    ignoreTypes:
+      - "sentence:start"
+      - "sentence:end"
+      - "sentence:uppercase"
+  write-good: true
+
+  # Writing style
+  first-sentence-length:
+    max: 140
+  sentence-length:
+    max: 280
+  max-comma:
+    max: 4
+
+  # Proofreading
+  date-weekday-mismatch: true
+  no-exclamation-question-mark: true
+
+  # Check to chars for invalid code points
+  "@textlint-rule/no-invalid-control-character": true
+  no-zero-width-spaces: true

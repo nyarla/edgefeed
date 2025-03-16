@@ -1,14 +1,33 @@
 {
   "name": "edgefeed",
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify"
+    "deploy": "wrangler deploy --minify",
+    "prepare": "husky"
   },
   "dependencies": {
     "hono": "^4.7.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250214.0",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@textlint-rule/textlint-rule-no-duplicate-abbr": "^1.0.2",
+    "@textlint-rule/textlint-rule-no-invalid-control-character": "^3.0.0",
+    "@textlint-rule/textlint-rule-no-unmatched-pair": "^2.0.4",
+    "husky": "^9.1.7",
+    "textlint": "^14.4.2",
+    "textlint-rule-alex": "^5.0.0",
+    "textlint-rule-date-weekday-mismatch": "^1.0.6",
+    "textlint-rule-first-sentence-length": "^2.0.0",
+    "textlint-rule-max-comma": "^4.0.0",
+    "textlint-rule-no-exclamation-question-mark": "^1.1.0",
+    "textlint-rule-no-start-duplicated-conjunction": "^2.0.2",
+    "textlint-rule-no-zero-width-spaces": "^1.0.1",
+    "textlint-rule-rousseau": "^1.4.8",
+    "textlint-rule-sentence-length": "^5.2.0",
+    "textlint-rule-write-good": "^2.0.0",
     "wrangler": "^4.0.0"
   }
 }
