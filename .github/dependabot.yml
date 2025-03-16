@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: bun
+    directory: "/"
+    schedule:
+      interval: weekly
+      timezone: "Asia/Tokyo"
+    labels:
+      - "dependabot"
+      - "bump(bun)"
+    commit-message:
+      prefix: 'chore(bun.lock): '
+
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+      timezone: "Asia/Tokyo"
+    labels:
+      - dependabot
+      - "bump(github-actions)"
+    commit-message:
+      prefix: 'chore(github-actions): '
