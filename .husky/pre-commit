@@ -1,0 +1,5 @@
+bunx biome format --write live
+bunx biome format --write src
+
+bunx biome lint live 
+bunx biome lint src
