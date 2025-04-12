@@ -1,46 +1,50 @@
 /**
- * The cache interface for everything.
+ * The interface for cache controller.
  *
- * This interface based on Cloudflare's `caches` interface,
- * but it could apply to any cache system,
+ * This interface based on Cloudflare's caches,
+ * but it can be use by any others.
  */
 export interface ICache {
   /**
-   * Match caceh by `Request` object.
+   * Take the cached `Response` object by `Request`.
    *
-   * If the cache found by `Request`, this function returns `Response` as async data,
-   * Otherwise return undefined.
+   * If the cached response found, this function returns that is,
+   * otherwise return undefined.
    *
-   * @param r Request - the Request object.
-   * @returns Promise<Response | underline> - the Response object or undefined.
+   * @param {Request} r - the cache key object to find cached `Response`.
+   * @returns {Promise<Response | undefined>} - then result to find cache.
+   * @async
    */
   match: (r: Request) => Promise<Response | undefined>;
 
   /**
-   * Put `Response` cache by `Request`.
+   * Put `Response` to cache by `Request`.
    *
-   * @param r Request - the cache key.
-   * @param s Response - the cache data.
-   * @returns Promise<void> - this function doesn't return anything,
+   * This function should be called from application controller.
+   *
+   * @param {Request} r - the cache key object by `Request`
+   * @param {Response} s - the cache data object by `Response`
+   * @returns {Promise<void>} - this functions returns nothing.}
+   * @async
    */
   put: (r: Request, s: Response) => Promise<void>;
 
   /**
-   * Delete `Response` cache by `Request`.
+   * Delete cache data by `Request`.
    *
-   * If delete cache succeed, this function return true.
-   * And anything else, return false.
+   * this function return true if cache was deleted, otherwise return false.
    *
-   * @param r Request - the cache key.
-   * @returns boolean - the result of delete cache succeed.
+   * @param {Request} r - the cache key by `Request`
+   * @returns {Promise<boolean>} - the result of cache is deleted.
    */
   delete: (r: Request) => Promise<boolean>;
 }
 
 /**
- * The interface for open cache instance.
+ * The type interface for open the ICache cache interface.
  *
- * @param key string - the key of cache namespace.
- * @returns Promise<ICache> - the instance of cache.
+ * @param {string} key - the namespace key of caches.
+ * @returns {Promise<ICache>} - the instance of ICache compatible object.
+ * @async
  */
 export type ICacheOpener = (key: string) => Promise<ICache>;
