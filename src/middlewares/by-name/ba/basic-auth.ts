@@ -1,12 +1,14 @@
-import type { Context, Next } from "hono";
+import type { Context, Next, MiddlewareHandler } from "hono";
 import { basicAuth } from "hono/basic-auth";
 
-/** The environment variables bindings for this middleware.
+/**
+ * The bindings for Hono with basic-auth middleware.
  */
 export type Bindings = {
   /**
-   * The value of basic auth is turned off
-   * If this value has `off` as string, this middleware pass through of basic authorization.
+   * The toggle for basic-auth middleware is off.
+   *
+   * If this value is `off`, basic-auth middleware is turned off.
    */
   EDGEFEED_BASIC_AUTH?: string;
 
@@ -23,30 +25,36 @@ export type Bindings = {
 /**
  * The basic auth middleware for edgefeed.
  *
+ * This middleware provides basic auth for edgefeed,
+ * and it support single user.
+ *
+ * @returns - the basic auth middleware for Hono.
+ *
  * @example
  * ```ts
- * import { type Bindings, middleware as basicAuth } from '{edgefeed}/middlewares/by-name/ba/basicAuth';
- * import { Hono } from 'hono'
+ * import { Hono } from 'hono';
+ * import { type Bindings, middleware as basicAuth } from '@/middlewares/by-name/ba/basic-auth';
  *
- * const app = new Hono<{Bindings: Bindings}>();
+ * const app = new Hono<{ Bindings: Bindings }>();
  *
- * app.use('/', basicAuth())
+ * app.use('/', basicAuth());
  *
  * export default app;
  * ```
  */
-export const middleware = () => async (c: Context, next: Next) => {
-  // if this value has `off`, this middleware pass through of basic auth.
-  if (c.env.EDGEFEED_BASIC_AUTH === "off") {
-    await next();
+export const middleware =
+  (): MiddlewareHandler => async (c: Context, next: Next) => {
+    // if this value has `off`, this middleware pass through of basic auth.
+    if (c.env.EDGEFEED_BASIC_AUTH === "off") {
+      await next();
+      return;
+    }
+
+    const authenticator = basicAuth({
+      username: c.env.EDGEFEED_USERNAME,
+      password: c.env.EDGEFEED_PASSWORD,
+    });
+
+    await authenticator(c, next);
     return;
-  }
-
-  const authenticator = basicAuth({
-    username: c.env.EDGEFEED_USERNAME,
-    password: c.env.EDGEFEED_PASSWORD,
-  });
-
-  await authenticator(c, next);
-  return;
-};
+  };
