@@ -1,4 +1,4 @@
-import type { Context, Next, MiddlewareHandler } from "hono";
+import type { Context, MiddlewareHandler, Next } from "hono";
 import { basicAuth } from "hono/basic-auth";
 
 /**
