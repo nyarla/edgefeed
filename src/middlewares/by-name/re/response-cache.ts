@@ -1,5 +1,5 @@
-import type { Context, MiddlewareHandler, Next } from "hono";
 import type { ICacheOpener } from "@/interfaces/cache";
+import type { Context, MiddlewareHandler, Next } from "hono";
 
 /**
  * The cache middleware for anything.
