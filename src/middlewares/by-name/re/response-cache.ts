@@ -6,8 +6,8 @@ import type { Context, MiddlewareHandler, Next } from "hono";
  *
  * This middleware uses cache namespace from Hono's `c.req.path`.
  *
- * @param open - the cache opener with `ICache` interface.
- * @returns - the Hono's middleware handler for the cachting.
+ * @param {ICacheOpener} open - the cache opener with `ICache` interface.
+ * @returns {MiddlewareHandler} - the Hono's middleware handler for the cachting.
  *
  * @example
  * ```ts

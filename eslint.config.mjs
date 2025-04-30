@@ -15,6 +15,8 @@ export default defineConfig([
     },
 
     rules: {
+      "jsdoc/no-types": 0,
+
       "jsdoc/check-tag-names": [
         "error",
         {
