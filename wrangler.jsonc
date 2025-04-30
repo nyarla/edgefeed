@@ -2,7 +2,16 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "edgefeed",
   "main": "src/index.ts",
-  "compatibility_date": "2025-03-16"
+  "compatibility_date": "2025-03-16",
+  "r2_buckets": [
+    {
+      "binding": "EDGEFEED_R2_CACHE_BUCKET",
+      "bucket_name": "edgefeed_r2_cache",
+    }
+  ],
+  "vars": {
+      "EDGEFEED_R2_CACHE_DURATION": 0,
+  },
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
