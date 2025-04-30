@@ -1,19 +1,23 @@
-name: Linting to the documentations
+name: The documentation lint to source codes.
 
 on:
+  pull_request:
+    branches: ["*"]
+    paths: &target
+      # workflows
+      - ".github/workflows/docs.yml"
+      # source code
+      - "src/**"
+      # configuration files
+      - "eslint.config.mjs"
+      - "tsconfig.json"
+      # packages
+      - "bun.lock"
+      - "package.json"
   push:
     branches:
       - main
-    paths:
-      - ".github/workflows/docs.yml"
-      - "eslint.config.mjs"
-      - "src/**"
-  pull_request:
-    branches: ["*"]
-    paths:
-      - ".github/workflows/docs.yml"
-      - "eslint.config.mjs"
-      - "src/**"
+    paths: *target
 
 jobs:
   biome:
