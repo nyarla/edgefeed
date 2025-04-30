@@ -3,7 +3,7 @@ name: The documentation lint to source codes.
 on:
   pull_request:
     branches: ["*"]
-    paths: &target
+    paths:
       # workflows
       - ".github/workflows/docs.yml"
       # source code
@@ -17,7 +17,17 @@ on:
   push:
     branches:
       - main
-    paths: *target
+    paths:
+      # workflows
+      - ".github/workflows/docs.yml"
+      # source code
+      - "src/**"
+      # configuration files
+      - "eslint.config.mjs"
+      - "tsconfig.json"
+      # packages
+      - "bun.lock"
+      - "package.json"
 
 jobs:
   jsdoc:

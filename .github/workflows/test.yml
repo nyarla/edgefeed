@@ -3,7 +3,7 @@ name: Running tests by vitest.
 on:
   pull_request:
     branches: ["*"]
-    paths: &target
+    paths:
       # workflows
       - ".github/workflows/test.yml"
       # source code
@@ -19,8 +19,19 @@ on:
   push:
     branches:
       - main
-    pull_request:
-      paths: *target
+    paths:
+      # workflows
+      - ".github/workflows/test.yml"
+      # source code
+      - "src/**"
+      # configuration files
+      - "tsconfig.json"
+      - "vitest.config.ts"
+      - "worker-configuration.d.ts"
+      - "wrangler.jsonc"
+      # package
+      - "bun.lock"
+      - "package.json"
 
 jobs:
   vitest:
