@@ -1,21 +1,37 @@
-name: run tests by vitest
+name: Running tests by vitest.
 
 on:
+  pull_request:
+    branches: ["*"]
+    paths:
+      # workflows
+      - ".github/workflows/test.yml"
+      # source code
+      - "src/**"
+      # configuration files
+      - "tsconfig.json"
+      - "vitest.config.ts"
+      - "worker-configuration.d.ts"
+      - "wrangler.jsonc"
+      # package
+      - "bun.lock"
+      - "package.json"
   push:
     branches:
       - main
     paths:
+      # workflows
       - ".github/workflows/test.yml"
+      # source code
+      - "src/**"
+      # configuration files
+      - "tsconfig.json"
+      - "vitest.config.ts"
+      - "worker-configuration.d.ts"
+      - "wrangler.jsonc"
+      # package
       - "bun.lock"
       - "package.json"
-      - "src/**"
-  pull_request:
-    branches: ["*"]
-    paths:
-      - ".github/workflows/test.yml"
-      - "bun.lock"
-      - "package.json"
-      - "src/**"
 
 jobs:
   vitest:
