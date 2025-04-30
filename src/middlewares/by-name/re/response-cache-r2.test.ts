@@ -22,7 +22,7 @@ describe("response-cache-r2", () => {
     const ctx = createExecutionContext();
 
     // create `ICache` interfaces object.
-    const cache = R2Cache(env.EDGEFEED_R2_CACHE_BUCKET, 10);
+    const cache = R2Cache(env.EDGEFEED_R2_CACHE_BUCKET, 100);
 
     // put object with request.
     const key = new Request("http://localhost");
@@ -33,7 +33,7 @@ describe("response-cache-r2", () => {
     ok = await data?.text();
 
     // wait for cache expired.
-    await sleep(100);
+    await sleep(200);
 
     // at now, the cache expired. this call should be return undefined.
     const vanished = await cache.match(key.clone());
