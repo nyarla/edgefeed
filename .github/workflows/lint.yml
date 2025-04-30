@@ -1,21 +1,24 @@
-name: lint by biome
+name: The source code lint by biome.
 
 on:
+  pull_request:
+    branches: ["*"]
+    paths: &target
+      # workflows
+      - ".github/workflows/lint.yml"
+      # source code
+      - "live/**"
+      - "src/**"
+      # configuration files
+      - "biome.json"
+      - "tsconfig.json"
+      # package
+      - "bun.lock"
+      - "package.json"
   push:
     branches:
       - main
-    paths:
-      - ".github/workflows/lint.yml"
-      - "biome.json"
-      - "live/**"
-      - "src/**"
-  pull_request:
-    branches: ["*"]
-    paths:
-      - ".github/workflows/lint.yml"
-      - "biome.json"
-      - "live/**"
-      - "src/**"
+    paths: *target
 
 jobs:
   biome:
