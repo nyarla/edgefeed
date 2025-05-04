@@ -35,6 +35,6 @@
     "textlint-rule-sentence-length": "^5.2.0",
     "textlint-rule-write-good": "^2.0.0",
     "vitest": "~3.0.0",
-    "wrangler": "^4.14.0"
+    "wrangler": "^4.14.1"
   }
 }
