@@ -8,7 +8,12 @@ describe("response-cache", () => {
   const dummryCacheOpener = async (key: string): Promise<ICache> => ({
     match: async (_: Request) =>
       "/foo" === key ? new Response(key, { status: 200 }) : undefined,
-    put: (_: Request, __: Response) => {
+    put: (key: Request, value: Response) => {
+      expect(key).toBeInstanceOf(Request);
+      expect(key.bodyUsed).toBeFalsy();
+
+      expect(value).toBeInstanceOf(Response);
+      expect(value.bodyUsed).toBeFalsy();
       return;
     },
     delete: (_: Request) => true,

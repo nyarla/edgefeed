@@ -58,7 +58,12 @@ describe("response-cache-r2", () => {
             ? new Response("/foo")
             : undefined;
         },
-        async put(_: Request, __: Response) {
+        async put(key: Request, value: Response) {
+          expect(key).toBeInstanceOf(Request);
+          expect(key.bodyUsed).toBeFalsy();
+
+          expect(value).toBeInstanceOf(Response);
+          expect(value.bodyUsed).toBeFalsy();
           return;
         },
         async delete(_: Request) {
