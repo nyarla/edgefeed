@@ -13,7 +13,7 @@
     "@biomejs/biome": "^1.9.4",
     "@cloudflare/vitest-pool-workers": "^0.8.15",
     "@commitlint/cli": "^19.8.0",
-    "@commitlint/config-conventional": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.1",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.26.0",
     "@textlint-rule/textlint-rule-no-duplicate-abbr": "^1.0.2",
