@@ -36,9 +36,11 @@ export const middleware =
     const request = c.req.raw.clone();
     const response = c.res.clone();
 
-    try {
-      c.executionCtx.waitUntil(cache.put(request, response));
-    } catch (e) {
-      await cache.put(request, response);
+    if (response.status === 200) {
+      try {
+        c.executionCtx.waitUntil(cache.put(request, response));
+      } catch (e) {
+        await cache.put(request, response);
+      }
     }
   };
