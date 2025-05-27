@@ -1,5 +1,4 @@
 bun run biome format --write live
 bun run biome format --write src
 
-bun run biome lint live
-bun run biome lint src
+bun run biome check live src
