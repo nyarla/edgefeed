@@ -63,7 +63,29 @@ export const R2Cache = (
           return undefined;
         }
 
-        return new Response(data.body, { status: 200 });
+        if (data.httpMetadata) {
+          const {
+            contentType,
+            contentLanguage,
+            contentEncoding,
+            cacheControl,
+            cacheExpiry,
+          } = data.httpMetadata;
+
+          const headers = new Headers();
+          contentType && headers.set("Content-Type", contentType);
+          contentLanguage && headers.set("Content-Language", contentLanguage);
+          contentEncoding && headers.set("Content-Encoding", contentEncoding);
+          cacheControl && headers.set("Cache-Control", cacheControl);
+          cacheExpiry && headers.set("Expires", cacheExpiry.toUTCString());
+
+          return new Response(data.body, { status: 200, headers });
+        }
+
+        return new Response(data.body, {
+          status: 200,
+          headers: { "Content-Type": "application/octet-stream" },
+        });
       }
 
       return undefined;
@@ -71,9 +93,9 @@ export const R2Cache = (
 
     async put(r: Request, s: Response): Promise<void> {
       const key = gen(r);
-      const { body } = s;
+      const { body, headers } = s;
 
-      await bucket.put(key, body);
+      await bucket.put(key, body, { httpMetadata: headers });
 
       return;
     },
@@ -119,9 +141,11 @@ export const middleware =
     const request = c.req.raw.clone();
     const response = c.res.clone();
 
-    try {
-      c.executionCtx.waitUntil(cache.put(request, response));
-    } catch (e) {
-      await cache.put(request, response);
+    if (response.status === 200) {
+      try {
+        c.executionCtx.waitUntil(cache.put(request, response));
+      } catch (e) {
+        await cache.put(request, response);
+      }
     }
   };

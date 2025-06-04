@@ -46,40 +46,37 @@ describe("response-cache-r2", () => {
     expect(none).toBeUndefined();
   });
 
-  it("test middleware", async () => {
-    // make dummy cache interface.
-    const open = (bucket: R2Bucket, duration: number): ICache => {
-      expect(bucket).toBeTruthy();
-      expect(0 <= duration).toBeTruthy();
+  const open = (bucket: R2Bucket, duration: number): ICache => {
+    expect(bucket).toBeTruthy();
+    expect(duration >= 0).toBeTruthy();
 
-      return {
-        async match(r: Request) {
-          return new URL(r.url).pathname === "/foo"
-            ? new Response("/foo")
-            : undefined;
-        },
-        async put(key: Request, value: Response) {
-          expect(key).toBeInstanceOf(Request);
-          expect(key.bodyUsed).toBeFalsy();
+    return R2Cache(bucket, 1000);
+  };
 
-          expect(value).toBeInstanceOf(Response);
-          expect(value.bodyUsed).toBeFalsy();
-          return;
-        },
-        async delete(_: Request) {
-          return true;
-        },
-      };
-    };
+  const app = new Hono<{ Bindings: Bindings }>();
+  app.get("*", middleware(open));
+  app.get("/ok", (c) => {
+    c.header("X-IS-TEST", "true");
+    c.header("Content-Type", "text/plain");
+    return c.body("ok");
+  });
+  app.get("/notfound", (c) => c.notFound());
 
-    // create Hono instance.
-    const app = new Hono<{ Bindings: Bindings }>();
-    app.get("*", middleware(open));
-    app.get("/foo", (c) => c.text("ok"));
-    app.get("/bar", (c) => c.text("ok"));
+  it("the response returns 200 ok, it should be storing to cache.", async () => {
+    let res = await app.request("/ok", {}, env);
+    expect(await res.text()).toBe("ok");
+    expect(res.headers.get("X-IS-TEST")).toBe("true");
 
-    // doing tests.
-    expect(await (await app.request("/foo", {}, env)).text()).toBe("/foo");
-    expect(await (await app.request("/bar", {}, env)).text()).toBe("ok");
+    res = await app.request("/ok", {}, env);
+    expect(await res.text()).toBe("ok");
+    expect(res.headers.get("Content-Type")).toBe("text/plain");
+    expect(res.headers.get("X-IS-TEST")).toBeFalsy();
+  });
+
+  it("the original response is not 200 ok, it should not be storing to cache", async () => {
+    const ctx = createExecutionContext();
+    const res = await app.request("/notfound", {}, env, ctx);
+    expect(res.status).toBe(404);
+    waitOnExecutionContext(ctx);
   });
 });

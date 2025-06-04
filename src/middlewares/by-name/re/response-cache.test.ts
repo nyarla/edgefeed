@@ -5,31 +5,50 @@ import { middleware as responseCache } from "./response-cache";
 
 describe("response-cache", () => {
   const app = new Hono();
-  const dummryCacheOpener = async (key: string): Promise<ICache> => ({
-    match: async (_: Request) =>
-      "/foo" === key ? new Response(key, { status: 200 }) : undefined,
-    put: (key: Request, value: Response) => {
-      expect(key).toBeInstanceOf(Request);
-      expect(key.bodyUsed).toBeFalsy();
 
-      expect(value).toBeInstanceOf(Response);
-      expect(value.bodyUsed).toBeFalsy();
+  const dummyCacheOpener = async (ns: string): Promise<ICache> => ({
+    async match(r: Request): Promise<Response | undefined> {
+      if (new URL(r.url).pathname === "/cached") {
+        return new Response(ns, { status: 200 });
+      }
+
+      return undefined;
+    },
+
+    async put(r: Request, w: Response): Promise<void> {
+      expect(new URL(r.url).pathname).toBe("/ok");
+
+      expect(r).toBeInstanceOf(Request);
+      expect(r.bodyUsed).toBeFalsy();
+
+      expect(w).toBeInstanceOf(Response);
+      expect(w.bodyUsed).toBeFalsy();
+
       return;
     },
-    delete: (_: Request) => true,
+
+    async delete(_: Request): Promise<boolean> {
+      return true;
+    },
   });
 
-  app.get("*", responseCache(dummryCacheOpener));
-  app.get("/foo", (c) => c.text("ok"));
-  app.get("/bar", (c) => c.text("ok"));
+  app.get("*", responseCache(dummyCacheOpener));
+  app.get("/ok", (c) => c.text("ok"));
+  app.get("/cached", (c) => c.text("ok"));
+  app.get("/notfound", (c) => c.notFound());
 
-  it("if cache data hits, return that", async () => {
-    const res = await app.request("/foo", {}, {});
-    expect(await res.text()).toBe("/foo");
-  });
-
-  it("if cache doesn't hit, the request pass through to controller", async () => {
-    const res = await app.request("/bar", {}, {});
+  it("the response returns 200 ok, it should be storing to cache.", async () => {
+    const res = await app.request("/ok", {}, {});
     expect(await res.text()).toBe("ok");
+  });
+
+  it("the response data exists in cache, it should be returned as response data.", async () => {
+    const res = await app.request("/cached", {}, {});
+    expect(await res.text()).toBe("/cached");
+  });
+
+  it("the original response is not 200 ok, it should not be storing to cache", async () => {
+    const res = await app.request("/notfound", {}, {});
+    expect(res.status).toBe(404);
   });
 });
