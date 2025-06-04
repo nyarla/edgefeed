@@ -46,40 +46,59 @@ describe("response-cache-r2", () => {
     expect(none).toBeUndefined();
   });
 
-  it("test middleware", async () => {
-    // make dummy cache interface.
-    const open = (bucket: R2Bucket, duration: number): ICache => {
-      expect(bucket).toBeTruthy();
-      expect(0 <= duration).toBeTruthy();
+  const open = (bucket: R2Bucket, duration: number): ICache => {
+    expect(bucket).toBeTruthy();
+    expect(duration >= 0).toBeTruthy();
 
-      return {
-        async match(r: Request) {
-          return new URL(r.url).pathname === "/foo"
-            ? new Response("/foo")
-            : undefined;
-        },
-        async put(key: Request, value: Response) {
-          expect(key).toBeInstanceOf(Request);
-          expect(key.bodyUsed).toBeFalsy();
+    return {
+      async match(r: Request): Promise<Response | undefined> {
+        if (new URL(r.url).pathname === "/cached") {
+          return new Response("/cached", { status: 200 });
+        }
 
-          expect(value).toBeInstanceOf(Response);
-          expect(value.bodyUsed).toBeFalsy();
-          return;
-        },
-        async delete(_: Request) {
-          return true;
-        },
-      };
+        return undefined;
+      },
+
+      async put(r: Request, w: Response): Promise<void> {
+        expect(r).toBeInstanceOf(Request);
+        expect(r.bodyUsed).toBeFalsy();
+
+        expect(w).toBeInstanceOf(Response);
+        expect(w.bodyUsed).toBeFalsy();
+
+        return;
+      },
+
+      async delete(_: Request): Promise<boolean> {
+        return true;
+      },
     };
+  };
 
-    // create Hono instance.
-    const app = new Hono<{ Bindings: Bindings }>();
-    app.get("*", middleware(open));
-    app.get("/foo", (c) => c.text("ok"));
-    app.get("/bar", (c) => c.text("ok"));
+  const app = new Hono<{ Bindings: Bindings }>();
+  app.get("*", middleware(open));
+  app.get("/ok", (c) => c.text("ok"));
+  app.get("/cached", (c) => c.text("ok"));
+  app.get("/notfound", (c) => c.notFound());
 
-    // doing tests.
-    expect(await (await app.request("/foo", {}, env)).text()).toBe("/foo");
-    expect(await (await app.request("/bar", {}, env)).text()).toBe("ok");
+  it("the response returns 200 ok, it should be storing to cache.", async () => {
+    const ctx = createExecutionContext();
+    const res = await app.request("/ok", {}, env, ctx);
+    expect(await res.text()).toBe("ok");
+    waitOnExecutionContext(ctx);
+  });
+
+  it("the response data exists in cache, it should be returned as response data.", async () => {
+    const ctx = createExecutionContext();
+    const res = await app.request("/cached", {}, env, ctx);
+    expect(await res.text()).toBe("/cached");
+    waitOnExecutionContext(ctx);
+  });
+
+  it("the original response is not 200 ok, it should not be storing to cache", async () => {
+    const ctx = createExecutionContext();
+    const res = await app.request("/notfound", {}, env, ctx);
+    expect(res.status).toBe(404);
+    waitOnExecutionContext(ctx);
   });
 });
