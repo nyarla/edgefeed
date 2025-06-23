@@ -27,6 +27,9 @@ export const t = (src: string): string =>
         .replace(/(["'\\])/g, (_, p1) => `\\${p1}`)
     : "";
 
+/**
+ * The transformer class for convert flstudio-news to JSON feed.
+ */
 export class JSONFeedTransformer {
   private baseUrl = "";
 
@@ -44,10 +47,21 @@ export class JSONFeedTransformer {
 
   private entries: string[] = [];
 
+  /**
+   * The constructor.
+   *
+   * @param {string} baseUrl - the base URL of JSON Feed,
+   * @returns {JSONFeedTransformer} - the instance of JSONFeedTransformer
+   */
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
   }
 
+  /**
+   * The dispatcher for `HTMLRewriter` elements.
+   *
+   * @param {Element} el - the `Element` object by `HTMLRewriter`
+   */
   element(el: Element) {
     const classNames = el.getAttribute("class");
 
@@ -149,6 +163,11 @@ export class JSONFeedTransformer {
     }
   }
 
+  /**
+   * The dispatcher for `HTMLRewriter` text.
+   *
+   * @param {Text} t - the `Text` object by `HTMLRewriter`.
+   */
   text(t: Text) {
     const text = t.text.replace(/^\s*|\s*$/g, "");
     if (text === "") {
@@ -193,6 +212,11 @@ export class JSONFeedTransformer {
     }
   }
 
+  /**
+   * Emit the current data to entries list.
+   *
+   * The state data is reset by this method.
+   */
   emitEntry() {
     const thumbnail =
       this.thumbnail !== "" ? `"banner_image": "${t(this.thumbnail)}",` : "";
@@ -223,6 +247,11 @@ export class JSONFeedTransformer {
     this.tags = [];
   }
 
+  /**
+   * Finalize entries data and emit JSON Feed string.
+   *
+   * @returns {string} - the JSON Feed string.
+   */
   finalize(): string {
     this.emitEntry();
 
@@ -243,6 +272,12 @@ export class JSONFeedTransformer {
 }`;
   }
 
+  /**
+   * Transform `REsponnse` object of flstudio-news page to JSON Feed string.
+   *
+   * @param {Response} input - the `Response` object fetched from flstudio-news page.
+   * @returns {Promise<string>} - the JSON Feed string by flstudio-news page.
+   */
   async transform(input: Response): Promise<string> {
     let rewriter = new HTMLRewriter();
 
@@ -271,6 +306,13 @@ export class JSONFeedTransformer {
   }
 }
 
+/**
+ * The transformer for flstudio-news page to JSON Feed.
+ *
+ * @param {Response} input - the `Response` object from flstudio-news page.
+ * @param {string} baseUrl - the base URL of JSON Feed.
+ * @returns {Promise<string>} - the JSON Feed string from flstudio-news page.
+ */
 export const transformToJSONFeed = (
   input: Response,
   baseUrl: string,
