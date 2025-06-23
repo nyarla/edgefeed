@@ -4,6 +4,13 @@ import { HTTPException } from "hono/http-exception";
 import { transformToJSONFeed } from "./parse";
 import { makeFLStudioNewRequest } from "./request";
 
+/**
+ * Make `Hono` handler for transform flstudio-news page to JSON feed.
+ *
+ * @param {string} baseUrl - the string of base URL on JSON feed.
+ * @param {string?} userAgent - the custom User-Agent string to fetch content.
+ * @returns {Handler}-- the Hono handler.
+ */
 export const FLStudioNewsToJSONFeed =
   (baseUrl: string, userAgent?: string): Handler =>
   async (c: Context) => {
