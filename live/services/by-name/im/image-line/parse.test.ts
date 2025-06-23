@@ -52,7 +52,7 @@ describe("jsonfeed live test", async () => {
         !("banner_image" in item) || item.banner_image.match(/^https:\/\//),
       ).toBeTruthy();
 
-      expect(item.summary).toBeTruthy();
+      expect(item.content_html).toBeTruthy();
 
       expect(item.tags.length).greaterThan(0);
     }

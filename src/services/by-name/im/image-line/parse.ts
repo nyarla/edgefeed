@@ -232,7 +232,7 @@ export class JSONFeedTransformer {
       "title": "${t(this.title)}",
       "id": "${t(this.href)}",
       "url": "${t(this.href)}",
-      "summary": "${t(this.summary)}",
+      "content_html": "${t(this.summary)}",
       ${thumbnail}
       ${tags}
       "date_published": "${this.date}"
