@@ -1,0 +1,12 @@
+{
+  "name": "customfeed",
+  "main": "index.ts",
+  "compatibility_date": "2025-03-16",
+  "r2_buckets": [{
+    "binding": "EDGEFEED_R2_CACHE_BUCKET",
+    "bucket_name": "edgefeed-customfeed-cache"
+  }],
+  "vars": {
+    "EDGEFEED_R2_CACHE_DURATION": 1800000 // 60 * 30 * 1000ms
+  }
+}
