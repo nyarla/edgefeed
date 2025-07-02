@@ -22,7 +22,7 @@
         "husky": "^9.1.7",
         "textlint": "^15.1.0",
         "textlint-rule-alex": "^5.0.0",
-        "textlint-rule-date-weekday-mismatch": "^1.1.0",
+        "textlint-rule-date-weekday-mismatch": "^1.1.1",
         "textlint-rule-first-sentence-length": "^2.0.0",
         "textlint-rule-max-comma": "^4.0.0",
         "textlint-rule-no-exclamation-question-mark": "^1.1.0",
@@ -1635,7 +1635,7 @@
 
     "textlint-rule-alex": ["textlint-rule-alex@5.0.0", "", { "dependencies": { "alex": "^11.0.1", "textlint-rule-helper": "^2.3.1" } }, "sha512-8HkUNY0HezGhzQbIMPvZBVdjKIkJ3Wqi29sSMM4Pc89Hdvcpn9Yr8YQoZi/mFn/njSKm/3AYtKoIMx4ziKDDqg=="],
 
-    "textlint-rule-date-weekday-mismatch": ["textlint-rule-date-weekday-mismatch@1.1.0", "", { "dependencies": { "chrono-node": "^1.2.5", "moment": "^2.29.1", "textlint-tester": "^12.0.2" } }, "sha512-vFuSKGpMFcRWh7LSvYKVE7QQBGxm2/1w2oIvMLfHN5EnXiFGQqrK560Otvc0POKf9yUIDI2iIMfT85z+st+LiA=="],
+    "textlint-rule-date-weekday-mismatch": ["textlint-rule-date-weekday-mismatch@1.1.1", "", { "dependencies": { "chrono-node": "^1.2.5", "moment": "^2.29.1", "textlint-tester": "^12.0.2" } }, "sha512-gxkRW31j1ON1V2Qr+JB+LOWsJY5ex24g0mr60FkR9Pnj1r08qOVr67G4O6Xc1fSXdj2gKz7RaKXMjuTr2e+b0Q=="],
 
     "textlint-rule-first-sentence-length": ["textlint-rule-first-sentence-length@2.0.0", "", { "dependencies": { "sentence-splitter": "^4.0.2", "textlint-rule-helper": "^2.0.0", "textlint-util-to-string": "^3.3.0" } }, "sha512-Zkux7xXGBD6KlW3leC/6rQ8Gb1FqI0Awu3ptFLBooSedU7RiGmOZaqkNxC3GQGy8M4YWJwOwiyjD5nLamF7uKQ=="],
 
