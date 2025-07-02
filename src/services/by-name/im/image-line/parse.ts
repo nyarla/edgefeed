@@ -39,6 +39,8 @@ export class JSONFeedTransformer {
   private pageUrl = "";
 
   private thumbnail = "";
+  private thumbnailWidth = "";
+  private thumbnailHeight = "";
   private date = "";
   private title = "";
   private href = "";
@@ -150,8 +152,12 @@ export class JSONFeedTransformer {
 
       case "img": {
         const src = el.getAttribute("data-lazy-src");
-        if (src) {
+        const width = el.getAttribute("width");
+        const height = el.getAttribute("height");
+        if (src && width && height) {
           this.thumbnail = src;
+          this.thumbnailWidth = width;
+          this.thumbnailHeight = height;
         }
         break;
       }
@@ -219,7 +225,11 @@ export class JSONFeedTransformer {
    */
   emitEntry() {
     const thumbnail =
-      this.thumbnail !== "" ? `"banner_image": "${t(this.thumbnail)}",` : "";
+      this.thumbnail !== ""
+        ? t(
+            `<p><a href="${this.href}"><img src="${this.thumbnail}" width="${this.thumbnailWidth}" height="${this.thumbnailHeight}" /></a></p>`,
+          )
+        : "";
 
     const tags =
       this.tags.length > 0
@@ -232,8 +242,7 @@ export class JSONFeedTransformer {
       "title": "${t(this.title)}",
       "id": "${t(this.href)}",
       "url": "${t(this.href)}",
-      "content_html": "${t(this.summary)}",
-      ${thumbnail}
+      "content_html": "${thumbnail}${t(this.summary)}",
       ${tags}
       "date_published": "${this.date}"
     }`;
