@@ -1,5 +1,5 @@
-import type { ICache } from "@/interfaces/cache";
 import type { Context, MiddlewareHandler, Next } from "hono";
+import type { ICache } from "@/interfaces/cache";
 
 /**
  * The Bindings for Cloudflare R2 cache middleware.
@@ -144,7 +144,7 @@ export const middleware =
     if (response.status === 200) {
       try {
         c.executionCtx.waitUntil(cache.put(request, response));
-      } catch (e) {
+      } catch (_e) {
         await cache.put(request, response);
       }
     }

@@ -3,12 +3,10 @@ import {
   env,
   waitOnExecutionContext,
 } from "cloudflare:test";
-import { describe, expect, it } from "vitest";
-
-import type { ICache } from "@/interfaces/cache";
-import { type Bindings, R2Cache, middleware } from "./response-cache-r2";
-
 import { Hono } from "hono";
+import { describe, expect, it } from "vitest";
+import type { ICache } from "@/interfaces/cache";
+import { type Bindings, middleware, R2Cache } from "./response-cache-r2";
 
 describe("response-cache-r2", () => {
   const sleep = (ms: number) =>
