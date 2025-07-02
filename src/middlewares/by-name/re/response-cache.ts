@@ -1,5 +1,5 @@
-import type { ICacheOpener } from "@/interfaces/cache";
 import type { Context, MiddlewareHandler, Next } from "hono";
+import type { ICacheOpener } from "@/interfaces/cache";
 
 /**
  * The cache middleware for anything.
@@ -39,7 +39,7 @@ export const middleware =
     if (response.status === 200) {
       try {
         c.executionCtx.waitUntil(cache.put(request, response));
-      } catch (e) {
+      } catch (_e) {
         await cache.put(request, response);
       }
     }

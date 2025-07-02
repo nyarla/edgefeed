@@ -1,6 +1,5 @@
-import { describe, expect, it } from "vitest";
-
 import { Hono } from "hono";
+import { describe, expect, it } from "vitest";
 import { type Bindings, middleware as basicAuth } from "./basic-auth";
 
 describe("basic-auth", () => {
