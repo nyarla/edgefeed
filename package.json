@@ -23,7 +23,7 @@
     "eslint": "^9.31.0",
     "eslint-plugin-jsdoc": "^51.3.4",
     "husky": "^9.1.7",
-    "textlint": "^15.1.0",
+    "textlint": "^15.2.0",
     "textlint-rule-alex": "^5.0.0",
     "textlint-rule-date-weekday-mismatch": "^1.1.1",
     "textlint-rule-first-sentence-length": "^2.0.0",
