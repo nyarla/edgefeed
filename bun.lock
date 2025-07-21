@@ -4,7 +4,7 @@
     "": {
       "name": "edgefeed",
       "dependencies": {
-        "hono": "^4.8.4",
+        "hono": "^4.8.5",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.1.1",
@@ -905,7 +905,7 @@
 
     "hastscript": ["hastscript@7.2.0", "", { "dependencies": { "@types/hast": "^2.0.0", "comma-separated-tokens": "^2.0.0", "hast-util-parse-selector": "^3.0.0", "property-information": "^6.0.0", "space-separated-tokens": "^2.0.0" } }, "sha512-TtYPq24IldU8iKoJQqvZOuhi5CyCQRAbvDOX0x1eW6rsHSxa/1i2CCiptNTotGHJ3VoHRGmqiv6/D3q113ikkw=="],
 
-    "hono": ["hono@4.8.4", "", {}, "sha512-KOIBp1+iUs0HrKztM4EHiB2UtzZDTBihDtOF5K6+WaJjCPeaW4Q92R8j63jOhvJI5+tZSMuKD9REVEXXY9illg=="],
+    "hono": ["hono@4.8.5", "", {}, "sha512-Up2cQbtNz1s111qpnnECdTGqSIUIhZJMLikdKkshebQSEBcoUKq6XJayLGqSZWidiH0zfHRCJqFu062Mz5UuRA=="],
 
     "hookified": ["hookified@1.9.1", "", {}, "sha512-u3pxtGhKjcSXnGm1CX6aXS9xew535j3lkOCegbA6jdyh0BaAjTbXI4aslKstCr6zUNtoCxFGFKwjbSHdGrMB8g=="],
 
