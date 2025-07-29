@@ -22,7 +22,7 @@ export const t = (src: string): string =>
         .replace(/\t+/g, " ")
         // biome-ignore lint/suspicious/noControlCharactersInRegex: this code remove unsafe string from `src`
         .replace(/[\u0000-\u001F]/g, "")
-        .replace(/(["'\\])/g, (_, p1) => `\\${p1}`)
+        .replace(/(["\\])/g, (_, p1) => `\\${p1}`)
     : "";
 
 /**
