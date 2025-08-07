@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
 
-import { FLStudioNewsToJSONFeed } from "../../../../../src/services/by-name/im/image-line/handlers";
+import { FLStudioNewsToJSONFeed } from "@/services/by-name/im/image-line/handlers";
 
 const app = new Hono();
 app.get("/", FLStudioNewsToJSONFeed("https://example.com/"));
