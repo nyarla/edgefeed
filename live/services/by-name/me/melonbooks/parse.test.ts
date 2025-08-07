@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { transformToJSONFeed } from "../../../../../src/services/by-name/me/melonbooks/parse";
+import { transformToJSONFeed } from "@/services/by-name/me/melonbooks/parse";
 import data from "./data.html";
 
 describe("jsonfeed live test", async () => {
