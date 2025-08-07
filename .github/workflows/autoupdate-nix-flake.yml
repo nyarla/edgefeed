@@ -1,0 +1,37 @@
+name: Automatic update to nix flake.lock
+
+on:
+  schedule:
+    - cron: "45 16 * * 5"
+  workflow_dispatch:
+
+permissions:
+  content: write
+  pull-requests: write
+
+jobs:
+  autoupdate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: cachix/install-nix-action@fc6e360bedc9ee72d75e701397f0bb30dce77568 # v31.5.2
+        with:
+          nix_path: nixpkgs=channel:nixpkgs-unstable
+
+      - name: Update nix flake
+        run: nix flake update
+
+      - name: Make metadata
+        id: meta
+        run: |
+          exec 1>$GITHUB_OUTPUT
+
+          echo "date=$(date +%Y-%m-%d)"
+
+      - uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          title: "chore(flake): update nix flake at ${{ steps.meta.outputs.date }}"
+          commit-message: "chore(flake): update nix flake at ${{ steps.meta.outputs.date }}"
+          branch: "update-nix-flake-at-${{ $steps.meta.outputs.date }}"
+          add-paths: |
+            flake.lock
