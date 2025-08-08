@@ -1,5 +1,4 @@
-const defaultDummyUserAgent =
-  "Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0";
+import { FirefoxForLinuxUserAgent as defaultDummyUserAgent } from "@/lib/const";
 
 /**
  * Make the `Request` object for fethcing melonbooks's circle page.

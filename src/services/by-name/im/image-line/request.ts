@@ -1,10 +1,9 @@
+import { FirefoxForLinuxUserAgent as defaultDummyUserAgent } from "@/lib/const";
+
 /**
  * The string of flstudio-news url.
  */
 export const FLStudioNewsUrl = "https://www.image-line.com/fl-studio-news";
-
-const defaultDummyUserAgent =
-  "Mozilla/5.0 (X11; Linux x86_64; rv:139.0) Gecko/20100101 Firefox/139.0";
 
 /**
  *  make the `Request` object for fetching to flstudio-news.
