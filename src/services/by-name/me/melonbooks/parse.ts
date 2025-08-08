@@ -1,3 +1,5 @@
+import { escapeJSON as t } from "@/lib/json";
+
 const melonbooksBaseUrl = "https://www.melonbooks.co.jp";
 
 enum Property {
@@ -9,21 +11,6 @@ enum Property {
   ProductAvailable = 5,
   ProductPrice = 6,
 }
-
-/**
- * Escape string for JSON.
- *
- * @param {string} src - the raw string.
- * @returns {string} - the escaped string from raw.
- */
-export const t = (src: string): string =>
-  src
-    ? src
-        .replace(/\t+/g, " ")
-        // biome-ignore lint/suspicious/noControlCharactersInRegex: this code remove unsafe string from `src`
-        .replace(/[\u0000-\u001F]/g, "")
-        .replace(/(["\\])/g, (_, p1) => `\\${p1}`)
-    : "";
 
 /**
  * The transformer class for Melonbooks circle page.

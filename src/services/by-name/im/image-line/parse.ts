@@ -1,3 +1,5 @@
+import { escapeJSON as t } from "@/lib/json";
+
 enum Property {
   Unknown = 0,
   Date = 1,
@@ -9,21 +11,6 @@ enum Property {
   Container = 101,
   Tags = 102,
 }
-
-/**
- * Escape string for JSON.
- *
- * @param {string} src - the raw string.
- * @returns {string} - the escaped string from raw.
- */
-export const t = (src: string): string =>
-  src
-    ? src
-        .replace(/\t+/g, " ")
-        // biome-ignore lint/suspicious/noControlCharactersInRegex: this code remove unsafe string from `src`
-        .replace(/[\u0000-\u001F]/g, "")
-        .replace(/(["\\])/g, (_, p1) => `\\${p1}`)
-    : "";
 
 /**
  * The transformer class for convert flstudio-news to JSON feed.
