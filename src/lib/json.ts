@@ -4,7 +4,6 @@
  * @param {string} src - the raw string to using on JSON.
  * @returns {string} - the escaped string that can be used as JSON string.
  */
-
 export const escapeJSON = (src: string): string =>
   src
     ? src
