@@ -10,7 +10,7 @@
     "hono": "^4.9.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.3",
+    "@biomejs/biome": "^2.2.4",
     "@cloudflare/vitest-pool-workers": "^0.9.3",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
