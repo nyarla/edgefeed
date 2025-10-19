@@ -20,7 +20,7 @@
     "@textlint-rule/textlint-rule-no-invalid-control-character": "^3.0.0",
     "@textlint-rule/textlint-rule-no-unmatched-pair": "^2.0.4",
     "@typescript-eslint/parser": "^8.44.1",
-    "eslint": "^9.36.0",
+    "eslint": "^9.38.0",
     "eslint-plugin-jsdoc": "^61.1.4",
     "husky": "^9.1.7",
     "textlint": "^15.2.3",
