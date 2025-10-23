@@ -7,7 +7,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "hono": "^4.9.11"
+    "hono": "^4.10.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",
