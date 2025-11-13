@@ -12,9 +12,9 @@ updates:
       prefix: 'chore(bun.lock): '
     cooldown:
       default-days: 5
-      semvar-major-day: 30
-      semvar-minor-day: 7
-      semvar-patch-day: 3
+      semvar-major-days: 30
+      semvar-minor-days: 7
+      semvar-patch-days: 3
 
   - package-ecosystem: github-actions
     directory: '/'
@@ -28,6 +28,6 @@ updates:
       prefix: 'chore(github-actions): '
     cooldown:
       default-days: 5
-      semvar-major-day: 30
-      semvar-minor-day: 7
-      semvar-patch-day: 3
+      semvar-major-days: 30
+      semvar-minor-days: 7
+      semvar-patch-days: 3
