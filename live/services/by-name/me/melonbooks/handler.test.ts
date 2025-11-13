@@ -17,7 +17,7 @@ describe("melonbooks/handlers", () => {
   // This test failed on local environment.
   // At the moment, melonbooks uses weak certificate to their website,
   // it trigger to SSL error on local test
-  it.todo("live request", async () => {
+  it("live request", async () => {
     const res = await app.request("/3753", {}, {});
 
     expect(res.ok).toBeTruthy();
