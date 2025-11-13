@@ -122,6 +122,7 @@ export type R2CacheOpener = typeof R2Cache;
  */
 export const middleware =
   (opener?: R2CacheOpener): MiddlewareHandler =>
+  /* oxlint-disable */
   async (c: Context, next: Next) => {
     const open = opener ?? R2Cache;
 

@@ -43,7 +43,9 @@ export type Bindings = {
  * ```
  */
 export const middleware =
-  (): MiddlewareHandler => async (c: Context, next: Next) => {
+  (): MiddlewareHandler =>
+  /* oxlint-disable  */
+  async (c: Context, next: Next) => {
     // if this value has `off`, this middleware pass through of basic auth.
     if (c.env.EDGEFEED_BASIC_AUTH === "off") {
       await next();

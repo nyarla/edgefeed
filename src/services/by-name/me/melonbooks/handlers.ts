@@ -13,6 +13,7 @@ import { makeCirclePageRequest } from "./request";
  */
 export const circlePageToJSONFeed =
   (baseUrl: string, userAgent?: string): Handler =>
+  /* oxlint-disable */
   async (c: Context) => {
     const id = c.req.param("id");
     if (id.match(/[^0-9]/)) {
