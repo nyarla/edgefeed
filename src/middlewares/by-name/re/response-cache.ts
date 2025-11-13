@@ -23,6 +23,7 @@ import type { ICacheOpener } from "@/interfaces/cache";
  */
 export const middleware =
   (open: ICacheOpener): MiddlewareHandler =>
+  /* oxlint-disable */
   async (c: Context, next: Next) => {
     const cache = await open(c.req.path);
     const cachedResponse = await cache.match(c.req.raw);

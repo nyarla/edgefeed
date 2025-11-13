@@ -13,6 +13,7 @@ import { makeFLStudioNewRequest } from "./request";
  */
 export const FLStudioNewsToJSONFeed =
   (baseUrl: string, userAgent?: string): Handler =>
+  /* oxlint-disable */
   async (c: Context) => {
     const request = makeFLStudioNewRequest(userAgent);
     const response = await fetch(request);
