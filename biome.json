@@ -6,8 +6,8 @@
     "useIgnoreFile": false
   },
   "files": {
-    "ignoreUnknown": false,
-    "includes": ["**"]
+    "ignoreUnknown": true,
+    "includes": ["**/*.ts", "**/*.tsx"]
   },
   "formatter": {
     "enabled": true,
