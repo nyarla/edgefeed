@@ -10,6 +10,11 @@ updates:
       - "bump(bun)"
     commit-message:
       prefix: 'chore(bun.lock): '
+    cooldown:
+      default-days: 5
+      semvar-major-day: 30
+      semvar-minor-day: 7
+      semvar-patch-day: 3
 
   - package-ecosystem: github-actions
     directory: '/'
@@ -21,3 +26,8 @@ updates:
       - "bump(github-actions)"
     commit-message:
       prefix: 'chore(github-actions): '
+    cooldown:
+      default-days: 5
+      semvar-major-day: 30
+      semvar-minor-day: 7
+      semvar-patch-day: 3
