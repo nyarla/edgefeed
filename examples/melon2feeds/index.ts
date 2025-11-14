@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono, type Handler } from "hono";
 
 import type { Bindings as basicAuthBindings } from "@/middlewares/by-name/ba/basic-auth";
 import type { Bindings as r2ResponseCacheBindings } from "@/middlewares/by-name/re/response-cache-r2";
@@ -9,7 +9,11 @@ import { middleware as r2ResponseCacheMiddleware } from "@/middlewares/by-name/r
 
 import { R2Cache } from "@/middlewares/by-name/re/response-cache-r2";
 
-import { circlePageToJSONFeed } from "@/services/by-name/me/melonbooks/handlers";
+import {
+  circlePageToJSONFeed,
+  newItemsPageToJSONFeed,
+  rankingPageToJSONFeed,
+} from "@/services/by-name/me/melonbooks/handlers";
 
 type Bindings = {} & basicAuthBindings & r2ResponseCacheBindings;
 
@@ -22,14 +26,20 @@ const R2CacheOpener = (bucket: R2Bucket, duration: number) =>
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.get("/", (c) => c.text("Usage: /circle/:id"));
+const url = (path: string) => `https://melonfeed.thotep.net/${path}/`;
+const get = (path: string, handler: Handler) =>
+  app.get(
+    path,
+    basicAuthMiddleware(),
+    responseCacheMiddleware(cacheOpener),
+    r2ResponseCacheMiddleware(R2CacheOpener),
+    handler,
+  );
 
-app.get(
-  "/circle/:id",
-  basicAuthMiddleware(),
-  responseCacheMiddleware(cacheOpener),
-  r2ResponseCacheMiddleware(R2CacheOpener),
-  circlePageToJSONFeed("https://melon2feed.thotep.net/circle/"),
-);
+app.get("/", (c) => c.text(""));
+
+get("/circle/:id", circlePageToJSONFeed(url("circle")));
+get("/ranking/:category/:type", rankingPageToJSONFeed(url("ranking")));
+get("/new/:category/:kind", newItemsPageToJSONFeed(url("new")));
 
 export default app;
