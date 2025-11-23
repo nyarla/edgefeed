@@ -19,7 +19,7 @@
     "@textlint-rule/textlint-rule-no-unmatched-pair": "^2.0.4",
     "husky": "^9.1.7",
     "oxlint": "^1.28.0",
-    "textlint": "^15.2.3",
+    "textlint": "^15.3.0",
     "textlint-rule-alex": "^5.0.0",
     "textlint-rule-date-weekday-mismatch": "^1.1.1",
     "textlint-rule-first-sentence-length": "^2.0.0",
