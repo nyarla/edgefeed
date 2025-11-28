@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.6",
-    "@cloudflare/vitest-pool-workers": "^0.10.7",
+    "@cloudflare/vitest-pool-workers": "^0.10.10",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@textlint-rule/textlint-rule-no-duplicate-abbr": "^1.0.2",
