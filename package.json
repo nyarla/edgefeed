@@ -18,7 +18,7 @@
     "@textlint-rule/textlint-rule-no-invalid-control-character": "^3.0.0",
     "@textlint-rule/textlint-rule-no-unmatched-pair": "^2.0.4",
     "husky": "^9.1.7",
-    "oxlint": "^1.31.0",
+    "oxlint": "^1.34.0",
     "textlint": "^15.5.0",
     "textlint-rule-alex": "^5.0.0",
     "textlint-rule-date-weekday-mismatch": "^1.1.1",
