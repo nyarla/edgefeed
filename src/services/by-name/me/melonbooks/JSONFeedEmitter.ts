@@ -2,6 +2,12 @@ import type { IEmitter } from "@/interfaces/IEmitter";
 import { escapeJSON as t } from "@/lib/json";
 import type { Namespace, Properties, Property, Value } from "./types";
 
+/**
+ * The internal function of unescape html
+ *
+ * @param src - the escaped string of html
+ * @returns - the raw text from html
+ */
 const un = (src: string) =>
   src
     .replaceAll("&lt;", "<")
@@ -10,6 +16,11 @@ const un = (src: string) =>
     .replaceAll("&qout;", '"')
     .replaceAll("&amp;", "&");
 
+/**
+ * The JSON Feed emitter.
+ *
+ * This class makes the jsonfeed string from internal state.
+ */
 export class JSONFeedEmitter implements IEmitter<Namespace, Property, Value> {
   private props: Properties = {} as Properties;
   private stack: Record<Namespace, Properties> = {} as Record<
@@ -21,23 +32,60 @@ export class JSONFeedEmitter implements IEmitter<Namespace, Property, Value> {
     Array<Properties>
   >;
 
+  /**
+   * The constructor of this class.
+   *
+   * @param feedUrl - the URL string of jsonfeed.
+   */
   constructor(feedUrl: Value) {
     this.set("feedUrl", feedUrl);
   }
 
+  /**
+   * Set `value` as `key` property.
+   *
+   * The `value` means top-level property on jsonfeed without Array properties.
+   *
+   * @param key - the property key
+   * @param value - the property value
+   */
   set(key: Property, value: Value) {
     this.props[key] = value;
   }
 
+  /**
+   * Get the property `value` by `key`, but without Array properties.
+   *
+   *
+   * @param key - the property key
+   * @returns - the property value
+   */
   get(key: Property) {
     return this.props[key];
   }
 
+  /**
+   * Add the key-value pair to internal stack for Array properties.
+   *
+   * This method only set to the stack of list,
+   * it needs to call `emit` method if flush and append stack value to Array property.
+   *
+   * @param ns - the namespace of Array properties
+   * @param key - the property key
+   * @param value - the property value
+   */
   add(ns: Namespace, key: Property, value: Value) {
     this.stack[ns] ??= {} as Properties;
     this.stack[ns][key] = value;
   }
 
+  /**
+   * Emit the key-value pairs to Array property.
+   *
+   * This method flush to internal stack state, and adds to internal stack to Array property.
+   *
+   * @param ns - the property namespace for flush and append to list-defined property.
+   */
   emit(ns: Namespace) {
     this.list[ns] ??= [];
 
@@ -45,7 +93,12 @@ export class JSONFeedEmitter implements IEmitter<Namespace, Property, Value> {
     this.stack[ns] = {} as Properties;
   }
 
-  toString() {
+  /**
+   * Makes to JSONFeed string from internal state.
+   *
+   * @returns - the string of jsonfeed
+   */
+  toString(): string {
     const title = t(`${this.get("circleName")} - メロンブックス`);
     const permalink = t(this.get("circlePage") as string);
     const feedUrl = t(this.get("feedUrl") as string);

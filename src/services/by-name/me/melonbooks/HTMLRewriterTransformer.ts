@@ -1,6 +1,11 @@
 import type { IEmitter } from "@/interfaces/IEmitter";
 import type { Namespace, Property, Value } from "./types";
 
+/**
+ * The html transformer class by HTMLRewriter.
+ *
+ * This class emit feed string by `IEmitter` implemented classes.
+ */
 export class HTMLRewriterTransformer {
   private emitter: IEmitter<Namespace, Property, Value>;
   private rewriter: HTMLRewriter;
@@ -25,6 +30,12 @@ export class HTMLRewriterTransformer {
 
   private urlPrefix = "https://www.melonbooks.co.jp";
 
+  /**
+   * The constructor of `HTMLRewriterTransformer`
+   *
+   * @param emitter - the instance of feed emitter
+   * @returns - the instance of this class
+   */
   constructor(emitter: IEmitter<Namespace, Property, Value>) {
     this.emitter = emitter;
     this.rewriter = new HTMLRewriter();
@@ -34,6 +45,11 @@ export class HTMLRewriterTransformer {
     }
   }
 
+  /**
+   * The `Element` handler for `HTMLRewriter`
+   *
+   * @param el - the instance of `Element` for `HTMLRewriter`
+   */
   element(el: Element) {
     const classNames = el.getAttribute("class") ?? "";
 
@@ -166,6 +182,11 @@ export class HTMLRewriterTransformer {
     }
   }
 
+  /**
+   * The `Text` handler for `HTMLRewriter`
+   *
+   * @param t - the instance of `Text` for `HTMLRewriter`
+   */
   text(t: Text) {
     const text = t.text;
     if (text === "") {
@@ -187,6 +208,12 @@ export class HTMLRewriterTransformer {
     this.target = "" as Property;
   }
 
+  /**
+   * The function of parse `Response` object to feed string
+   *
+   * @param src - the `Response` object by the fetched melonbooks page.
+   * @returns - the `Promise<string>` object for transformed feed.
+   */
   async parse(src: Response): Promise<string> {
     await this.rewriter.transform(src).text();
     return this.emitter.toString();
