@@ -1,12 +1,24 @@
 import type { Context, Handler } from "hono";
 import { HTTPException } from "hono/http-exception";
 
-import { transformToJSONFeed } from "./parse";
+import { HTMLRewriterTransformer } from "./HTMLRewriterTransformer";
+import { JSONFeedEmitter } from "./JSONFeedEmitter";
+
 import {
   makeCirclePageRequest,
   makeNewItemsPageRequest,
   makeRankingPageRequest,
 } from "./request";
+
+const transformToJSONFeed = (
+  response: Response,
+  feedUrl: string,
+): Promise<string> => {
+  const emitter = new JSONFeedEmitter(feedUrl);
+  const transfomer = new HTMLRewriterTransformer(emitter);
+
+  return transfomer.parse(response);
+};
 
 /**
  * Make `Hono` handler for transform melonbooks's circle page to JSON Feed.
@@ -35,7 +47,7 @@ export const circlePageToJSONFeed =
       });
     }
 
-    return c.body(await transformToJSONFeed(response, baseUrl), 200, {
+    return c.body(await transformToJSONFeed(response, baseUrl + id), 200, {
       "Content-Type": "application/feed+json; charset=utf-8",
     });
   };
