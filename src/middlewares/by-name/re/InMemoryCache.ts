@@ -103,6 +103,7 @@ export class InMemoryCache implements ICache {
  * The factory function for in-memory cache initializer.
  *
  * @param {number} duration - the duration of caching data by milliseconds.
+ * @returns the ICacheInitializer for in-memory cache.
  */
 export const createInMemoryCacheInitializer = (
   duration: number,

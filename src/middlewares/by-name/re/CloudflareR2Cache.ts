@@ -116,7 +116,7 @@ export class CloudflareR2Cache implements ICache {
    *
    * @param {Request} req - the Request object as cache key.
    * @param {Response} res - the Response object as cached data.
-   * @return {Promise<void>} - this method should calls with async, but no returns anything.
+   * @returns {Promise<void>} - this method should calls with async, but no returns anything.
    */
   async put(req: Request, res: Response): Promise<void> {
     const key = this.key(req);
@@ -129,7 +129,7 @@ export class CloudflareR2Cache implements ICache {
   /**
    * Remove cache data by Request as key.
    *
-   * @param {Request} - the Request object as delete key.
+   * @param {Request} r - the Request object as delete key.
    * @returns {Promise<boolean>} - this value is always `true`.
    **/
   async delete(r: Request): Promise<boolean> {
@@ -141,6 +141,8 @@ export class CloudflareR2Cache implements ICache {
 
 /**
  * The factory function for the ICacheInitializer with CloudflareR2Cache.
+ *
+ * @returns the initializer for CloudflareR2Cache.
  */
 export const createCloudflareR2CacheInitializer =
   (): ICacheInitializer => async (c: Context) => {

@@ -3,6 +3,8 @@ import type { ICacheInitializer } from "@/interfaces/ICache";
 
 /**
  * The factory function for ICacheInitializer with Cloudflare Wokers caches object.
+ *
+ * @returns the ICacheInitializer for Cloudflare Workers caches interface.
  */
 export const createCloudflareWorkersCacheInitializer =
   (): ICacheInitializer => async (c: Context) => {
