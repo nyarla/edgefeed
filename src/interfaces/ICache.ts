@@ -1,3 +1,5 @@
+import type { Context } from "hono";
+
 /**
  * The interface for cache controller.
  *
@@ -41,10 +43,10 @@ export interface ICache {
 }
 
 /**
- * The type interface for open the ICache cache interface.
+ * The type of interface for initialize ICache object.
  *
- * @param {string} key - the namespace key of caches.
- * @returns {Promise<ICache>} - the instance of ICache compatible object.
+ * @param {Context} c - the hono's context object,
+ * @returns {Promise<ICache>} - the instance of ICache object,
  * @async
- */
-export type ICacheOpener = (key: string) => Promise<ICache>;
+ **/
+export type ICacheInitializer = (c: Context) => Promise<ICache>;
