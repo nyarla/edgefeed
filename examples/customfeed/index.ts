@@ -1,30 +1,31 @@
 import { Hono } from "hono";
 
-import type { Bindings as basicAuthBindings } from "@/middlewares/by-name/ba/basic-auth";
-import type { Bindings as r2ResponseCacheBindings } from "@/middlewares/by-name/re/response-cache-r2";
+import {
+  type Bindings as basicAuthBindings,
+  middleware as basicAuthMiddleware,
+} from "@/middlewares/by-name/ba/basic-auth";
+import {
+  type CloudflareR2CacheBindings,
+  createCloudflareR2CacheInitializer,
+} from "@/middlewares/by-name/re/CloudflareR2Cache";
+import { createCloudflareWorkersCacheInitializer } from "@/middlewares/by-name/re/CloudflareWorkersCache";
 
-import { middleware as basicAuthMiddleware } from "@/middlewares/by-name/ba/basic-auth";
-import { middleware as responseCacheMiddleware } from "@/middlewares/by-name/re/response-cache";
-import { middleware as r2ResponseCacheMiddleware } from "@/middlewares/by-name/re/response-cache-r2";
-
-import { R2Cache } from "@/middlewares/by-name/re/response-cache-r2";
+import { createResponseCacheMiddleware } from "@/middlewares/by-name/re/ResponseCache";
 
 import { FLStudioNewsToJSONFeed } from "@/services/by-name/im/image-line/handlers";
 
-type Bindings = {} & basicAuthBindings & r2ResponseCacheBindings;
-
-const cacheOpener = (ns: string) => caches.open(`response:${ns}`);
-const R2CacheOpener = (bucket: R2Bucket, duration: number) =>
-  R2Cache(bucket, duration, (r: Request) => new URL(r.url).pathname);
+type Bindings = {} & basicAuthBindings & CloudflareR2CacheBindings;
 
 const app = new Hono<{ Bindings: Bindings }>();
-
-app.use(
-  "*",
-  basicAuthMiddleware(),
-  responseCacheMiddleware(cacheOpener),
-  r2ResponseCacheMiddleware(R2CacheOpener),
+const basicAuth = basicAuthMiddleware();
+const cloudflareWorkersCache = createResponseCacheMiddleware(
+  createCloudflareWorkersCacheInitializer(),
 );
+const cloudflareR2Cache = createResponseCacheMiddleware(
+  createCloudflareR2CacheInitializer(),
+);
+
+app.use("*", basicAuth, cloudflareWorkersCache, cloudflareR2Cache);
 
 app.get(
   "/by-name/im/image-line/flstudio-news.json",

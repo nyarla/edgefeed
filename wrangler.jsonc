@@ -6,12 +6,12 @@
   "r2_buckets": [
     {
       "binding": "EDGEFEED_R2_CACHE_BUCKET",
-      "bucket_name": "edgefeed-r2-cache",
+      "bucket_name": "edgefeed-r2-cache"
     }
   ],
   "vars": {
-      "EDGEFEED_R2_CACHE_DURATION": 0,
-  },
+      "EDGEFEED_R2_CACHE_DURATION": 2000
+  }
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
