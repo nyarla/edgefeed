@@ -5,8 +5,8 @@ import {
   middleware as basicAuthMiddleware,
 } from "@/middlewares/by-name/ba/basic-auth";
 import {
-  createCloudflareR2CacheInitializer,
   type CloudflareR2CacheBindings,
+  createCloudflareR2CacheInitializer,
 } from "@/middlewares/by-name/re/CloudflareR2Cache";
 import { createCloudflareWorkersCacheInitializer } from "@/middlewares/by-name/re/CloudflareWorkersCache";
 

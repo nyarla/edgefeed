@@ -1,15 +1,15 @@
-import { Hono, type Handler } from "hono";
+import { type Handler, Hono } from "hono";
 
-import type { Bindings as basicAuthBindings } from "@/middlewares/by-name/ba/basic-auth";
-
+import {
+  type Bindings as basicAuthBindings,
+  middleware as basicAuthMiddleware,
+} from "@/middlewares/by-name/ba/basic-auth";
 import {
   type CloudflareR2CacheBindings,
   createCloudflareR2CacheInitializer,
 } from "@/middlewares/by-name/re/CloudflareR2Cache";
 import { createCloudflareWorkersCacheInitializer } from "@/middlewares/by-name/re/CloudflareWorkersCache";
 import { createResponseCacheMiddleware } from "@/middlewares/by-name/re/ResponseCache";
-
-import { middleware as basicAuthMiddleware } from "@/middlewares/by-name/ba/basic-auth";
 
 import {
   circlePageToJSONFeed,
