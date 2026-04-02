@@ -1,13 +1,15 @@
 import { Hono, type Handler } from "hono";
 
 import type { Bindings as basicAuthBindings } from "@/middlewares/by-name/ba/basic-auth";
-import type { Bindings as r2ResponseCacheBindings } from "@/middlewares/by-name/re/response-cache-r2";
+
+import {
+  type CloudflareR2CacheBindings,
+  createCloudflareR2CacheInitializer,
+} from "@/middlewares/by-name/re/CloudflareR2Cache";
+import { createCloudflareWorkersCacheInitializer } from "@/middlewares/by-name/re/CloudflareWorkersCache";
+import { createResponseCacheMiddleware } from "@/middlewares/by-name/re/ResponseCache";
 
 import { middleware as basicAuthMiddleware } from "@/middlewares/by-name/ba/basic-auth";
-import { middleware as responseCacheMiddleware } from "@/middlewares/by-name/re/response-cache";
-import { middleware as r2ResponseCacheMiddleware } from "@/middlewares/by-name/re/response-cache-r2";
-
-import { R2Cache } from "@/middlewares/by-name/re/response-cache-r2";
 
 import {
   circlePageToJSONFeed,
@@ -15,31 +17,35 @@ import {
   rankingPageToJSONFeed,
 } from "@/services/by-name/me/melonbooks/handlers";
 
-type Bindings = {} & basicAuthBindings & r2ResponseCacheBindings;
-
-const cacheOpener = (ns: string) => caches.open(`response:${ns}`);
-const R2CacheOpener = (bucket: R2Bucket, duration: number) =>
-  R2Cache(bucket, duration, (r: Request) => {
-    const href = new URL(r.url).pathname.split("/");
-    return href[href.length - 1];
-  });
+type Bindings = {} & basicAuthBindings & CloudflareR2CacheBindings;
 
 const app = new Hono<{ Bindings: Bindings }>();
+const basicAuth = basicAuthMiddleware();
+const cloudflareWorkersCache = createResponseCacheMiddleware(
+  createCloudflareWorkersCacheInitializer(),
+);
+const cloudflareR2Cache = createResponseCacheMiddleware(
+  createCloudflareR2CacheInitializer(),
+);
 
-const url = (path: string) => `https://melonfeed.thotep.net/${path}/`;
-const get = (path: string, handler: Handler) =>
+app.get("/", (c) => c.text("ok"));
+
+const get = (
+  ns: string,
+  path: string,
+  createHandler: (baseUrl: string, userAgnet?: string) => Handler,
+) => {
   app.get(
     path,
-    basicAuthMiddleware(),
-    responseCacheMiddleware(cacheOpener),
-    r2ResponseCacheMiddleware(R2CacheOpener),
-    handler,
+    basicAuth,
+    cloudflareWorkersCache,
+    cloudflareR2Cache,
+    createHandler(`https://melonfeed.thotep.net/${ns}/`),
   );
+};
 
-app.get("/", (c) => c.text(""));
-
-get("/circle/:id", circlePageToJSONFeed(url("circle")));
-get("/ranking/:category/:type", rankingPageToJSONFeed(url("ranking")));
-get("/new/:category/:kind", newItemsPageToJSONFeed(url("new")));
+get("circle", "/circle/:id", circlePageToJSONFeed);
+get("ranking", "/ranking/:category/:type", rankingPageToJSONFeed);
+get("new", "/new/:category/:kind", newItemsPageToJSONFeed);
 
 export default app;
