@@ -73,39 +73,7 @@ export class CloudflareR2Cache implements ICache {
       const status = 200;
       const headers = new Headers();
 
-      if (data.httpMetadata) {
-        const {
-          contentType,
-          contentLanguage,
-          contentEncoding,
-          cacheControl,
-          cacheExpiry,
-        } = data.httpMetadata;
-
-        const headers = new Headers();
-
-        if (contentType) {
-          headers.set("Content-Type", contentType);
-        }
-
-        if (contentLanguage) {
-          headers.set("Content-Language", contentLanguage);
-        }
-
-        if (contentEncoding) {
-          headers.set("Content-Encoding", contentEncoding);
-        }
-
-        if (cacheControl) {
-          headers.set("Cache-Control", cacheControl);
-        }
-
-        if (cacheExpiry) {
-          headers.set("Expires", cacheExpiry.toUTCString());
-        }
-      } else {
-        headers.set("Content-Type", "application/octet-stream");
-      }
+      data.writeHttpMetadata(headers);
 
       return new Response(data.body, { status, headers });
     }
