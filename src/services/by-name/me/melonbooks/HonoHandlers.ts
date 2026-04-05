@@ -10,14 +10,59 @@ import {
   createRankingPageRequest,
 } from "./Request";
 
+/***
+ * The type of options for Hono handler.
+ */
 export type HanderOptions = {
+  /**
+   * The base url for generated feed.
+   */
   baseUrl: string;
+  /**
+   * The kind of page type on melonbooks.
+   *
+   * This value assign to these values:
+   *
+   * - circle: the circle page
+   * - ranking: the ranking page
+   * - news: the new items page
+   */
   kind: "circle" | "ranking" | "news";
+  /**
+   * The format of feed.
+   *
+   * At the moment, this value supported to "json" or "atom".
+   */
   format: "json" | "atom";
+  /**
+   * `ICacheInitializer` object for response cache from melonbooks
+   */
   open: ICacheInitializer;
+
+  /**
+   * The custom User-Agent string. this is optional.
+   */
   userAgent?: string;
 };
 
+/**
+ * Create the Hoho handler by HandlerOptions.
+ *
+ * This function supports to make three handlers with the some path parameters,
+ * and that requires to working Hono handlers:
+ *
+ * - kind: `circle`
+ *   - `id`: the id of circle page. this value shoulde be the number
+ * - kind: `ranking`
+ *   - `kind`: the kind of ranking page. this value should be the number
+ *   - `id`: the category id of ranking page. this value should be the number
+ * - kind: `news`
+ *   - `kind`: the kind of new items page. this value should be the string of `reserve` or `new`.
+ *   - `id`: the category id of new items page. this value should be the number
+ *
+ * @param {HandlerOptions} the options to make Hono handler.
+ * @returns {Handler} the Hono handler.
+ */
 export const createHonoHandler =
   ({ baseUrl, kind, format, open, userAgent }: HanderOptions): Handler =>
   async (c: Context) => {
