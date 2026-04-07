@@ -10,7 +10,8 @@
     }
   ],
   "vars": {
-      "EDGEFEED_R2_CACHE_DURATION": 2000
+      "EDGEFEED_R2_CACHE_DURATION": 2000,
+      "EDGEFEED_TOKEN_AUTH_TOKEN": "ABC12345"
   }
   // "compatibility_flags": [
   //   "nodejs_compat"
