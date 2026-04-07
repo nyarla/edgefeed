@@ -1,5 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import type { Context } from "hono";
+import type { Authenticator } from "./Authentication";
 
 export type TokenAuthBindings = {
   /**
@@ -13,6 +14,13 @@ const decode = (src: string): Uint8Array => {
   return textEncoder.encode(src);
 };
 
+/**
+ * The verifier token stirng.
+ *
+ * @param {Uint8Array} challenge - the challenge token.
+ * @param {Uint8Array} token - the valid token.
+ * @returns {boolean} the result of verify token. if this value is true that means verity is scceed, or false is verify failed.
+ **/
 export const verifyToken = (
   challenge: Uint8Array,
   token: Uint8Array,
@@ -24,8 +32,13 @@ export const verifyToken = (
   return false;
 };
 
+/**
+ * The function of instantiate token authorizatior implementation.
+ *
+ * @returns {Authenticator} the authorizatior implementation for token auth.
+ */
 export const createTokenAuthenticator =
-  () =>
+  (): Authenticator =>
   async (c: Context): Promise<boolean> => {
     const length = c.env.EDGEFEED_TOKEN_AUTH_TOKEN.length;
     const challenge = decode(
