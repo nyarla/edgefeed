@@ -1,51 +1,60 @@
-import { type Handler, Hono } from "hono";
-
+import { Hono } from "hono";
+import { createAuthenticateMiddleware } from "@/middlewares/by-name/au/Authentication";
 import {
-  type Bindings as basicAuthBindings,
-  middleware as basicAuthMiddleware,
-} from "@/middlewares/by-name/ba/basic-auth";
+  createTokenAuthenticator,
+  type TokenAuthBindings,
+} from "@/middlewares/by-name/au/TokenAuth";
+
 import {
   type CloudflareR2CacheBindings,
   createCloudflareR2CacheInitializer,
 } from "@/middlewares/by-name/re/CloudflareR2Cache";
+
 import { createCloudflareWorkersCacheInitializer } from "@/middlewares/by-name/re/CloudflareWorkersCache";
+
 import { createResponseCacheMiddleware } from "@/middlewares/by-name/re/ResponseCache";
 
 import {
-  circlePageToJSONFeed,
-  newItemsPageToJSONFeed,
-  rankingPageToJSONFeed,
-} from "@/services/by-name/me/melonbooks/handlers";
+  createHonoHandler,
+  type HanderOptions,
+} from "@/services/by-name/me/melonbooks/HonoHandlers";
 
-type Bindings = {} & basicAuthBindings & CloudflareR2CacheBindings;
+type Bindings = {} & CloudflareR2CacheBindings & TokenAuthBindings;
 
 const app = new Hono<{ Bindings: Bindings }>();
-const basicAuth = basicAuthMiddleware();
+
+const tokenAuth = createAuthenticateMiddleware(createTokenAuthenticator());
+
 const cloudflareWorkersCache = createResponseCacheMiddleware(
   createCloudflareWorkersCacheInitializer(),
 );
+
 const cloudflareR2Cache = createResponseCacheMiddleware(
   createCloudflareR2CacheInitializer(),
 );
 
 app.get("/", (c) => c.text("ok"));
 
-const get = (
-  ns: string,
-  path: string,
-  createHandler: (baseUrl: string, userAgnet?: string) => Handler,
-) => {
+type kind = "circle" | "ranking" | "news";
+
+const options = (kind: kind): HanderOptions => ({
+  baseUrl: `https://melonfeed.thotep.net/${kind}/`,
+  kind,
+  format: "atom",
+  open: createCloudflareR2CacheInitializer(),
+});
+
+const handleAtom = (path: string, kind: kind) =>
   app.get(
     path,
-    basicAuth,
+    tokenAuth,
     cloudflareWorkersCache,
     cloudflareR2Cache,
-    createHandler(`https://melonfeed.thotep.net/${ns}/`),
+    createHonoHandler(options(kind)),
   );
-};
 
-get("circle", "/circle/:id", circlePageToJSONFeed);
-get("ranking", "/ranking/:category/:type", rankingPageToJSONFeed);
-get("new", "/new/:category/:kind", newItemsPageToJSONFeed);
+handleAtom("/circle/:id/atom", "circle");
+handleAtom("/ranking/:kind/:id/atom", "ranking");
+handleAtom("/new/:kind/:type/atom", "news");
 
 export default app;
