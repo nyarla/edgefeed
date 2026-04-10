@@ -10,8 +10,22 @@ describe("image-line/HTMLRewriterTransformer", () => {
     const parser = new HTMLRewriterTransformer(emitter);
     const payload = await parser.parse(src);
 
-    console.log(payload);
-
     expect(payload).toBeTruthy();
+
+    const f = JSON.parse(payload);
+
+    expect(f.version).toBe("https://jsonfeed.org/version/1.1");
+    expect(f.title).match(/FL Studio News/);
+    expect(f.language).toBe("en");
+    expect(f.home_page_url).toBe("https://www.image-line.com/news");
+    expect(f.feed_url).toBe("https://example.com/jsonfeed.json");
+
+    for (const i of f.items) {
+      expect(i.id).toBeTruthy();
+      expect(i.url).match(/^https:\/\/www\.image-line\.com/);
+      expect(i.title).toBeTruthy();
+      expect(i.image).match(/^https:\/\/www\.image-line\.com/);
+      expect(i.content_html).not.include("undefined");
+    }
   });
 });

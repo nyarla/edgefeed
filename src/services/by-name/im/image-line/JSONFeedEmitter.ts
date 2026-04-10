@@ -38,6 +38,7 @@ export class JSONFeedEmitter implements IEmitter<Namespace, Property, Value> {
   }
 
   add(ns: Namespace, key: Property, value: Value) {
+    this.stack[ns] ??= {} as Properties;
     this.stack[ns][key] = value;
   }
 
@@ -51,13 +52,39 @@ export class JSONFeedEmitter implements IEmitter<Namespace, Property, Value> {
     const feedTitle = t(un(this.get("feedTitle").replace(/\s+/g, " ")));
     const feedUrl = t(this.get("feedUrl"));
 
+    const content = (this.list?.entry ?? [])
+      .toSorted((a, b) =>
+        new Date(a.entryDate) < new Date(b.entryDate) ? 1 : -1,
+      )
+      .map((entry) => {
+        const title = t(un(entry.entryTitle));
+        const href = t(un(entry.entryUrl));
+        const date = t(un(new Date(entry.entryDate).toISOString()));
+        const image = t(un(entry.entryImage));
+        const line = t(un(`${entry.entryFirstLine}...`));
+        const html = t(
+          `<p><a href="${entry.entryUrl}"><img src="${image}" alt></a></p><p>${entry.entryFirstLine}</p><p>...</p>`,
+        );
+
+        return `{
+  "id": "${href}",
+  "title": "${title}",
+  "url": "${href}",
+  "image": "${image}",
+  "date_published": "${date}",
+  "summary": "${line}",
+  "content_html": "${html}"
+}`;
+      })
+      .join(",");
+
     return `{
   "version": "https://jsonfeed.org/version/1.1",
   "title": "${feedTitle}",
   "language": "en",
   "home_page_url": "https://www.image-line.com/news",
-  "feed_url": "${feedUrl}".
-  "items": []
+  "feed_url": "${feedUrl}",
+  "items": [${content}]
 }`;
   }
 }
