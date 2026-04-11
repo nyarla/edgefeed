@@ -1,7 +1,10 @@
 {
   "name": "customfeed",
   "main": "index.ts",
-  "compatibility_date": "2025-03-16",
+  "compatibility_date": "2026-04-08",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "r2_buckets": [{
     "binding": "EDGEFEED_R2_CACHE_BUCKET",
     "bucket_name": "edgefeed-customfeed-cache"
