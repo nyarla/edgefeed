@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { makeFLStudioNewRequest } from "./request";
+import { createFLStudioNewRequest } from "./Request";
 
 describe("flstudio-news/request", () => {
   it("common test", () => {
-    const r = makeFLStudioNewRequest();
+    const r = createFLStudioNewRequest();
 
     expect(r.method).toBe("GET");
     expect(r.redirect).toBe("follow");
@@ -12,7 +12,7 @@ describe("flstudio-news/request", () => {
   });
 
   it("with User-Agent", () => {
-    const r = makeFLStudioNewRequest("example/0.01");
+    const r = createFLStudioNewRequest("example/0.01");
 
     expect(r.headers.get("User-Agent")).toBe("example/0.01");
   });
