@@ -1,35 +1,43 @@
 import { Hono } from "hono";
-
+import { createAuthenticateMiddleware } from "@/middlewares/by-name/au/Authentication";
 import {
-  type Bindings as basicAuthBindings,
-  middleware as basicAuthMiddleware,
-} from "@/middlewares/by-name/ba/basic-auth";
+  createTokenAuthenticator,
+  type TokenAuthBindings,
+} from "@/middlewares/by-name/au/TokenAuth";
 import {
   type CloudflareR2CacheBindings,
   createCloudflareR2CacheInitializer,
 } from "@/middlewares/by-name/re/CloudflareR2Cache";
 import { createCloudflareWorkersCacheInitializer } from "@/middlewares/by-name/re/CloudflareWorkersCache";
-
 import { createResponseCacheMiddleware } from "@/middlewares/by-name/re/ResponseCache";
+import {
+  createHonoHandler,
+  type HanlderOptions,
+} from "@/services/by-name/im/image-line/HonoHandler";
 
-import { FLStudioNewsToJSONFeed } from "@/services/by-name/im/image-line/handlers";
-
-type Bindings = {} & basicAuthBindings & CloudflareR2CacheBindings;
+type Bindings = {} & TokenAuthBindings & CloudflareR2CacheBindings;
 
 const app = new Hono<{ Bindings: Bindings }>();
-const basicAuth = basicAuthMiddleware();
+const tokenAuth = createAuthenticateMiddleware(createTokenAuthenticator());
+
 const cloudflareWorkersCache = createResponseCacheMiddleware(
   createCloudflareWorkersCacheInitializer(),
 );
+
 const cloudflareR2Cache = createResponseCacheMiddleware(
   createCloudflareR2CacheInitializer(),
 );
 
-app.use("*", basicAuth, cloudflareWorkersCache, cloudflareR2Cache);
+const commonHanlderOptions: HanlderOptions = {
+  baseUrl: "https://customfeed.thotep.net",
+  format: "atom",
+  open: createCloudflareWorkersCacheInitializer(),
+};
 
+app.use("*", tokenAuth, cloudflareWorkersCache, cloudflareR2Cache);
 app.get(
-  "/by-name/im/image-line/flstudio-news.json",
-  FLStudioNewsToJSONFeed("https://customfeed.thotep.net"),
+  "/by-name/im/image-line/flstudio-news.atom",
+  createHonoHandler(commonHanlderOptions),
 );
 
 export default app;
