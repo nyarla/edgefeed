@@ -1,4 +1,4 @@
-# GEMINI.md - edgefeed project context
+# edgefeed project context
 
 ## Project Overview
 
