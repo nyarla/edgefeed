@@ -27,6 +27,6 @@ describe("JSON#normalize", () => {
   });
 
   it("escape double quotes and backslashes", () => {
-    expect(n(`a \" b \\ \\c ""`)).toBe('a \\" b \\\\ \\\\c \\"\\"');
+    expect(n(`a " b \\ \\c ""`)).toBe('a \\" b \\\\ \\\\c \\"\\"');
   });
 });
