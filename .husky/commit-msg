@@ -1,2 +1,2 @@
-cat $1 | bun run textlint -- -c "$(dirname "${0}")/../textlintrc.yml" --stdin --stdin-filename "commit-msg.txt"
-bun run commitlint -- --edit $1
+cat $1 | node_modules/.bin/textlint -c "$(dirname "${0}")/../textlintrc.yml" --stdin --stdin-filename "commit-msg.txt"
+node_modules/.bin/commitlint -- --edit $1
