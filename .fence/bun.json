@@ -1,0 +1,12 @@
+{
+  "extends": "@base",
+  "filesystem": {
+    "allowRead": ["~/.config/git/", "~/.ssh/id_ed25519.pub"],
+    "allowWrite": ["package.json", "bun.lock", "node_modules"],
+    "defaultDenyRead": true
+  },
+  "network": {
+    "allowedDomains": ["registry.npmjs.org", "*.npmjs.org"],
+    "allowedUnixSockets": ["/run/user/*/gnupg/S.gpg-agent.ssh"]
+  }
+}

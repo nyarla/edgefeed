@@ -1,0 +1,33 @@
+{
+  "extends": "@base",
+  "filesystem": {
+    "allowGitConfig": true,
+    "allowRead": ["~/.config/git/", "~/.ssh/id_ed25519.pub"],
+    "allowExecute": [
+      ".husky",
+      ".husky/_",
+      "node_modules/.bin/biome",
+      "node_modules/.bin/commitlint",
+      "node_modules/.bin/oxlint",
+      "node_modules/.bin/textlint"
+    ],
+    "allowWrite": [".", ".git", "~/.ssh/known_hosts", "~/.ssh/known_hosts.old"],
+    "defaultDenyRead": true
+  },
+  "network": {
+    "allowedDomains": [
+      "github.com",
+      "gitlab.com",
+      "codeberg.org",
+      "api.github.com",
+      "codeload.github.com",
+      "lfs.github.com",
+      "objects.githubusercontent.com"
+    ],
+    "allowedUnixSockets": ["/run/user/*/gnupg/S.gpg-agent.ssh"]
+  },
+  "ssh": {
+    "allowAllCommands": true,
+    "allowedHosts": ["github.com", "gitlab.com", "codeberg.org"]
+  }
+}
