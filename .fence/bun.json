@@ -2,7 +2,7 @@
   "extends": "@base",
   "filesystem": {
     "allowRead": ["~/.config/git/", "~/.ssh/id_ed25519.pub"],
-    "allowWrite": ["package.json", "bun.lock", "node_modules"],
+    "allowWrite": ["bun.lock", "node_modules", "~/.wrangler/logs"],
     "defaultDenyRead": true
   },
   "network": {
