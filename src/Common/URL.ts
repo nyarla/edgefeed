@@ -14,6 +14,23 @@ export const normalizeURL = (
   }
 
   try {
+    if (src.startsWith("https://") || src.startsWith("http://")) {
+      return new URL(src);
+    }
+
+    if (src.startsWith("//")) {
+      return new URL(`https:${src}`);
+    }
+
+    if (src.startsWith("/")) {
+      const base = new URL(baseUrl);
+      return new URL(`${base.protocol}//${base.hostname}${src}`);
+    }
+
+    if (src.startsWith("#")) {
+      return new URL(`${baseUrl}${src}`);
+    }
+
     return new URL(src, baseUrl);
   } catch (_: unknown) {
     return null;
