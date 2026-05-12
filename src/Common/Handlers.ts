@@ -30,15 +30,22 @@ export type ExtractHandlerConfig<Scope extends string, Prop extends string> =
       value: string;
     }
   | {
-      type: "SwitchScope";
+      type: "EnterScope";
       scope: Scope;
+    }
+  | {
+      type: "EndScope";
     }
   | {
       type: "IncrementScopeId";
     };
 
 export type ExtractHandlerArgs<Scope extends string, Prop extends string> =
-  | (({ type: "SwitchScope" } | { type: "IncrementScopeId" }) &
+  | ((
+      | { type: "EnterScope" }
+      | { type: "EndScope" }
+      | { type: "IncrementScopeId" }
+    ) &
       ExtractHandlerConfig<Scope, Prop> & {
         pc: ParserContext<Scope>;
       })
@@ -213,25 +220,36 @@ export class StaticStringHandler<Scope extends string, Prop extends string>
   text(_: Text) {}
 }
 
-export class SwitchScopeHandler<Scope extends string>
-  implements ExtractHandler
-{
+export class EnterScopeHandler<Scope extends string> implements ExtractHandler {
   private pc!: ParserContext<Scope>;
   private scope!: Scope;
 
   constructor({
     pc,
     scope,
-  }: { type: "SwitchScope" } & ExtractHandlerArgs<Scope, string>) {
+  }: { type: "EnterScope" } & ExtractHandlerArgs<Scope, string>) {
     this.pc = pc;
     this.scope = scope;
   }
 
-  element(el: Element) {
+  element(_: Element) {
     this.pc.enterScope(this.scope);
-    el.onEndTag(() => {
-      this.pc.endScope();
-    });
+  }
+
+  text(_: Text) {}
+}
+
+export class EndScopeHandler<Scope extends string> implements ExtractHandler {
+  private pc!: ParserContext<Scope>;
+
+  constructor({
+    pc,
+  }: { type: "EndScope" } & ExtractHandlerArgs<Scope, string>) {
+    this.pc = pc;
+  }
+
+  element(_: Element) {
+    this.pc.endScope();
   }
 
   text(_: Text) {}
@@ -296,10 +314,16 @@ export const createExtractHandlers = <
           new StaticStringHandler<Scope, Prop>({ emitter, pc, ...config }),
         ]);
         break;
-      case "SwitchScope":
+      case "EnterScope":
         registry.push([
           selector,
-          new SwitchScopeHandler<Scope>({ pc, ...config }),
+          new EnterScopeHandler<Scope>({ pc, ...config }),
+        ]);
+        break;
+      case "LeaveScope":
+        registry.push([
+          selector,
+          new EnterScopeHandler<Scope>({ pc, ...config }),
         ]);
         break;
       case "IncrementScopeId":

@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { Emitter } from "./Emitter";
 import {
   BufferedStringHandler,
+  EndScopeHandler,
+  EnterScopeHandler,
   IncrementScopeIdHandler,
   StaticStringHandler,
   StringAttributeHandler,
-  SwitchScopeHandler,
   URLAttributeHandler,
 } from "./Handlers";
 import { ParserContext } from "./ParserContext";
@@ -242,16 +243,16 @@ describe("Handlers", () => {
     });
   });
 
-  describe("SwitchScopeHandler", () => {
-    it("should switch to the specified context scope if the element is found", async () => {
-      const parentScope = new SwitchScopeHandler<Scope>({
-        type: "SwitchScope",
+  describe("EnterScopeHandler", () => {
+    it("should enter the specified context scope if the element is found", async () => {
+      const parentScope = new EnterScopeHandler<Scope>({
+        type: "EnterScope",
         pc,
         scope: "parent",
       });
 
-      const childScope = new SwitchScopeHandler<Scope>({
-        type: "SwitchScope",
+      const childScope = new EnterScopeHandler<Scope>({
+        type: "EnterScope",
         pc,
         scope: "child",
       });
@@ -274,6 +275,42 @@ describe("Handlers", () => {
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         parent: [{ value: "new scope" }],
         child: [{ value: "new scope" }],
+      });
+    });
+  });
+
+  describe("EndScopeHandler", () => {
+    it("should exit the current context scope if the element is found", async () => {
+      const enterScope = new EnterScopeHandler<Scope>({
+        type: "EnterScope",
+        pc,
+        scope: "parent",
+      });
+
+      const endScope = new EndScopeHandler<Scope>({
+        type: "EndScope",
+        pc,
+      });
+
+      const staticValue = new StaticStringHandler<Scope, Prop>({
+        type: "StaticString",
+        emitter,
+        pc,
+        prop: "value",
+        value: "new scope",
+      });
+
+      rewriter.on("p.msg", enterScope);
+      rewriter.on("p.msg", staticValue);
+
+      rewriter.on("p.nest", endScope);
+      rewriter.on("p.nest", staticValue);
+
+      await rewriter.transform(src).arrayBuffer();
+
+      expect(JSON.parse(emitter.toString())).toStrictEqual({
+        root: [{ value: "new scope" }],
+        parent: [{ value: "new scope" }],
       });
     });
   });
