@@ -320,10 +320,10 @@ export const createExtractHandlers = <
           new EnterScopeHandler<Scope>({ pc, ...config }),
         ]);
         break;
-      case "LeaveScope":
+      case "EndScope":
         registry.push([
           selector,
-          new EnterScopeHandler<Scope>({ pc, ...config }),
+          new EndScopeHandler<Scope>({ pc, ...config }),
         ]);
         break;
       case "IncrementScopeId":

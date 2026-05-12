@@ -1,13 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Emitter } from "./Emitter";
 import {
-  BufferedStringHandler,
-  EndScopeHandler,
-  EnterScopeHandler,
-  IncrementScopeIdHandler,
-  StaticStringHandler,
-  StringAttributeHandler,
-  URLAttributeHandler,
+  createExtractHandlers,
+  type ExtractHandler,
+  type ExtractHandlerConfig,
 } from "./Handlers";
 import { ParserContext } from "./ParserContext";
 import { DumpRenderer } from "./Utils";
@@ -62,12 +58,15 @@ describe("Handlers", () => {
     });
   });
 
+  const createHandler = (
+    config: ExtractHandlerConfig<Scope, Prop>,
+  ): ExtractHandler =>
+    createExtractHandlers({ emitter, pc, configs: [["", config]] })[0][1];
+
   describe("URLAttributeHandler", () => {
     it("should return a URL extracted from a HTML", async () => {
-      const handler = new URLAttributeHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "URLAttribute",
-        emitter,
-        pc,
         baseUrl,
         prop: "href",
         attr: "href",
@@ -83,10 +82,8 @@ describe("Handlers", () => {
     });
 
     it("should return an empty result if the attribute is empty", async () => {
-      const handler = new URLAttributeHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "URLAttribute",
-        emitter,
-        pc,
         baseUrl,
         prop: "href",
         attr: "href",
@@ -100,10 +97,8 @@ describe("Handlers", () => {
     });
 
     it("should return an empty result if the element doesn't have an attribute", async () => {
-      const handler = new URLAttributeHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "URLAttribute",
-        emitter,
-        pc,
         baseUrl,
         prop: "href",
         attr: "href",
@@ -119,10 +114,8 @@ describe("Handlers", () => {
 
   describe("StringAttributeHandler", () => {
     it("should return an attribute value extracted from a HTML", async () => {
-      const handler = new StringAttributeHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "StringAttribute",
-        emitter,
-        pc,
         prop: "encoding",
         attr: "charset",
       });
@@ -137,10 +130,8 @@ describe("Handlers", () => {
     });
 
     it("should return an empty result if the element has an empty attribute", async () => {
-      const handler = new StringAttributeHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "StringAttribute",
-        emitter,
-        pc,
         prop: "href",
         attr: "href",
       });
@@ -153,10 +144,8 @@ describe("Handlers", () => {
     });
 
     it("should return an empty result if the element doesn't have an attribute", async () => {
-      const handler = new StringAttributeHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "StringAttribute",
-        emitter,
-        pc,
         prop: "href",
         attr: "href",
       });
@@ -171,10 +160,8 @@ describe("Handlers", () => {
 
   describe("BufferedStringHandler", () => {
     it("should return a single-line text extracted from HTML content", async () => {
-      const handler = new BufferedStringHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "BufferedString",
-        emitter,
-        pc,
         prop: "message",
       });
 
@@ -188,10 +175,8 @@ describe("Handlers", () => {
     });
 
     it("should return plain text extracted from the HTML content tree", async () => {
-      const handler = new BufferedStringHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "BufferedString",
-        emitter,
-        pc,
         prop: "message",
       });
 
@@ -207,10 +192,8 @@ describe("Handlers", () => {
 
   describe("StaticStringHandler", () => {
     it("should set a static value if the element is found", async () => {
-      const handler = new StaticStringHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "StaticString",
-        emitter,
-        pc,
         prop: "constant",
         value: "const",
       });
@@ -225,10 +208,8 @@ describe("Handlers", () => {
     });
 
     it("should set the latest static value if multiple elements are found", async () => {
-      const handler = new StaticStringHandler<Scope, Prop>({
+      const handler = createHandler({
         type: "StaticString",
-        emitter,
-        pc,
         prop: "constant",
         value: "const",
       });
@@ -245,22 +226,18 @@ describe("Handlers", () => {
 
   describe("EnterScopeHandler", () => {
     it("should enter the specified context scope if the element is found", async () => {
-      const parentScope = new EnterScopeHandler<Scope>({
+      const parentScope = createHandler({
         type: "EnterScope",
-        pc,
         scope: "parent",
       });
 
-      const childScope = new EnterScopeHandler<Scope>({
+      const childScope = createHandler({
         type: "EnterScope",
-        pc,
         scope: "child",
       });
 
-      const staticValue = new StaticStringHandler<Scope, Prop>({
+      const staticValue = createHandler({
         type: "StaticString",
-        emitter,
-        pc,
         prop: "value",
         value: "new scope",
       });
@@ -281,21 +258,17 @@ describe("Handlers", () => {
 
   describe("EndScopeHandler", () => {
     it("should exit the current context scope if the element is found", async () => {
-      const enterScope = new EnterScopeHandler<Scope>({
+      const enterScope = createHandler({
         type: "EnterScope",
-        pc,
         scope: "parent",
       });
 
-      const endScope = new EndScopeHandler<Scope>({
+      const endScope = createHandler({
         type: "EndScope",
-        pc,
       });
 
-      const staticValue = new StaticStringHandler<Scope, Prop>({
+      const staticValue = createHandler({
         type: "StaticString",
-        emitter,
-        pc,
         prop: "value",
         value: "new scope",
       });
@@ -317,15 +290,12 @@ describe("Handlers", () => {
 
   describe("IncrementScopeIdHandler", () => {
     it("should increment scope's ID if the element is found", async () => {
-      const newId = new IncrementScopeIdHandler<Scope>({
+      const newId = createHandler({
         type: "IncrementScopeId",
-        pc,
       });
 
-      const staticValue = new StaticStringHandler<Scope, Prop>({
+      const staticValue = createHandler({
         type: "StaticString",
-        emitter,
-        pc,
         prop: "value",
         value: "new scope",
       });
