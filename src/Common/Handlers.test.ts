@@ -1,11 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Emitter } from "./Emitter";
-import {
-  createExtractHandlers,
-  type ExtractHandler,
-  type ExtractHandlerConfig,
-} from "./Handlers";
 import { ParserContext } from "./ParserContext";
+import { Transformer } from "./Transformer";
 import { DumpRenderer } from "./Utils";
 
 type Scope = "root" | "parent" | "child";
@@ -41,7 +37,6 @@ const HTML = `
 describe("Handlers", () => {
   let emitter!: Emitter<Scope, Item>;
   let pc!: ParserContext<Scope>;
-  let rewriter!: HTMLRewriter;
   let src!: Response;
 
   const baseUrl = "https://example.com";
@@ -49,7 +44,6 @@ describe("Handlers", () => {
   beforeEach(() => {
     emitter = new Emitter<Scope, Item>({ renderer: DumpRenderer });
     pc = new ParserContext<Scope>("root");
-    rewriter = new HTMLRewriter();
     src = new Response(HTML, {
       status: 200,
       headers: {
@@ -58,23 +52,16 @@ describe("Handlers", () => {
     });
   });
 
-  const createHandler = (
-    config: ExtractHandlerConfig<Scope, Prop>,
-  ): ExtractHandler =>
-    createExtractHandlers({ emitter, pc, configs: [["", config]] })[0][1];
-
   describe("URLAttributeHandler", () => {
     it("should return a URL extracted from a HTML", async () => {
-      const handler = createHandler({
-        type: "URLAttribute",
-        baseUrl,
-        prop: "href",
-        attr: "href",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        [
+          'link[rel="canonical"]',
+          { type: "URLAttribute", prop: "href", attr: "href", baseUrl },
+        ],
+      ]);
 
-      rewriter.on('link[rel="canonical"]', handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         root: [{ href: "https://example.com/foo.html" }],
@@ -82,31 +69,27 @@ describe("Handlers", () => {
     });
 
     it("should return an empty result if the attribute is empty", async () => {
-      const handler = createHandler({
-        type: "URLAttribute",
-        baseUrl,
-        prop: "href",
-        attr: "href",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        [
+          'link[rel="alternate"]',
+          { type: "URLAttribute", prop: "href", attr: "href", baseUrl },
+        ],
+      ]);
 
-      rewriter.on('link[rel="alternate"]', handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({});
     });
 
     it("should return an empty result if the element doesn't have an attribute", async () => {
-      const handler = createHandler({
-        type: "URLAttribute",
-        baseUrl,
-        prop: "href",
-        attr: "href",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        [
+          'link[rel="self"]',
+          { type: "URLAttribute", prop: "href", attr: "href", baseUrl },
+        ],
+      ]);
 
-      rewriter.on('link[rel="self"]', handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({});
     });
@@ -114,15 +97,14 @@ describe("Handlers", () => {
 
   describe("StringAttributeHandler", () => {
     it("should return an attribute value extracted from a HTML", async () => {
-      const handler = createHandler({
-        type: "StringAttribute",
-        prop: "encoding",
-        attr: "charset",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        [
+          "meta[charset]",
+          { type: "StringAttribute", prop: "encoding", attr: "charset" },
+        ],
+      ]);
 
-      rewriter.on("meta[charset]", handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         root: [{ encoding: "utf-8" }],
@@ -130,29 +112,27 @@ describe("Handlers", () => {
     });
 
     it("should return an empty result if the element has an empty attribute", async () => {
-      const handler = createHandler({
-        type: "StringAttribute",
-        prop: "href",
-        attr: "href",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        [
+          'link[rel="alternate"]',
+          { type: "StringAttribute", prop: "href", attr: "href" },
+        ],
+      ]);
 
-      rewriter.on('link[rel="alternate"]', handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({});
     });
 
     it("should return an empty result if the element doesn't have an attribute", async () => {
-      const handler = createHandler({
-        type: "StringAttribute",
-        prop: "href",
-        attr: "href",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        [
+          'link[rel="self"]',
+          { type: "StringAttribute", prop: "href", attr: "href" },
+        ],
+      ]);
 
-      rewriter.on('link[rel="self"]', handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({});
     });
@@ -160,14 +140,11 @@ describe("Handlers", () => {
 
   describe("BufferedStringHandler", () => {
     it("should return a single-line text extracted from HTML content", async () => {
-      const handler = createHandler({
-        type: "BufferedString",
-        prop: "message",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        ["p.msg", { type: "BufferedString", prop: "message" }],
+      ]);
 
-      rewriter.on("p.msg", handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         root: [{ message: "hello, world! this is a simple message." }],
@@ -175,14 +152,11 @@ describe("Handlers", () => {
     });
 
     it("should return plain text extracted from the HTML content tree", async () => {
-      const handler = createHandler({
-        type: "BufferedString",
-        prop: "message",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        ["p.nest", { type: "BufferedString", prop: "message" }],
+      ]);
 
-      rewriter.on("p.nest", handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         root: [{ message: "this is an important message." }],
@@ -192,15 +166,11 @@ describe("Handlers", () => {
 
   describe("StaticStringHandler", () => {
     it("should set a static value if the element is found", async () => {
-      const handler = createHandler({
-        type: "StaticString",
-        prop: "constant",
-        value: "const",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        ["p.msg", { type: "StaticString", prop: "constant", value: "const" }],
+      ]);
 
-      rewriter.on("p.msg", handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         root: [{ constant: "const" }],
@@ -208,15 +178,11 @@ describe("Handlers", () => {
     });
 
     it("should set the latest static value if multiple elements are found", async () => {
-      const handler = createHandler({
-        type: "StaticString",
-        prop: "constant",
-        value: "const",
-      });
+      const transformer = new Transformer<Scope, Prop>(emitter, pc, [
+        ["link", { type: "StaticString", prop: "constant", value: "const" }],
+      ]);
 
-      rewriter.on("link", handler);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         root: [{ constant: "const" }],
@@ -226,28 +192,14 @@ describe("Handlers", () => {
 
   describe("EnterScopeHandler", () => {
     it("should enter the specified context scope if the element is found", async () => {
-      const parentScope = createHandler({
-        type: "EnterScope",
-        scope: "parent",
-      });
+      const transformer = new Transformer<Scope, string>(emitter, pc, [
+        ["p.msg", { type: "EnterScope", scope: "parent" }],
+        ["p.msg", { type: "StaticString", prop: "value", value: "new scope" }],
+        ["p.nest", { type: "EnterScope", scope: "child" }],
+        ["p.nest", { type: "StaticString", prop: "value", value: "new scope" }],
+      ]);
 
-      const childScope = createHandler({
-        type: "EnterScope",
-        scope: "child",
-      });
-
-      const staticValue = createHandler({
-        type: "StaticString",
-        prop: "value",
-        value: "new scope",
-      });
-
-      rewriter.on("p.msg", parentScope);
-      rewriter.on("p.msg", staticValue);
-      rewriter.on("p.nest", childScope);
-      rewriter.on("p.nest", staticValue);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         parent: [{ value: "new scope" }],
@@ -258,28 +210,14 @@ describe("Handlers", () => {
 
   describe("EndScopeHandler", () => {
     it("should exit the current context scope if the element is found", async () => {
-      const enterScope = createHandler({
-        type: "EnterScope",
-        scope: "parent",
-      });
+      const transformer = new Transformer<Scope, string>(emitter, pc, [
+        ["p.msg", { type: "EnterScope", scope: "parent" }],
+        ["p.msg", { type: "StaticString", prop: "value", value: "new scope" }],
+        ["p.nest", { type: "EndScope" }],
+        ["p.nest", { type: "StaticString", prop: "value", value: "new scope" }],
+      ]);
 
-      const endScope = createHandler({
-        type: "EndScope",
-      });
-
-      const staticValue = createHandler({
-        type: "StaticString",
-        prop: "value",
-        value: "new scope",
-      });
-
-      rewriter.on("p.msg", enterScope);
-      rewriter.on("p.msg", staticValue);
-
-      rewriter.on("p.nest", endScope);
-      rewriter.on("p.nest", staticValue);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         root: [{ value: "new scope" }],
@@ -290,20 +228,12 @@ describe("Handlers", () => {
 
   describe("IncrementScopeIdHandler", () => {
     it("should increment scope's ID if the element is found", async () => {
-      const newId = createHandler({
-        type: "IncrementScopeId",
-      });
+      const transformer = new Transformer<Scope, string>(emitter, pc, [
+        ["link", { type: "IncrementScopeId" }],
+        ["link", { type: "StaticString", prop: "value", value: "new scope" }],
+      ]);
 
-      const staticValue = createHandler({
-        type: "StaticString",
-        prop: "value",
-        value: "new scope",
-      });
-
-      rewriter.on("link", newId);
-      rewriter.on("link", staticValue);
-
-      await rewriter.transform(src).arrayBuffer();
+      await transformer.transform(src);
 
       expect(JSON.parse(emitter.toString())).toStrictEqual({
         root: [
