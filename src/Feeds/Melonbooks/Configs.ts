@@ -1,11 +1,12 @@
-import type { HandlerConfigRegistry } from "./Types";
+import type { ExtractHandlerConfig } from "@/Common/Handlers";
+import type { Prop, Scope } from "./Types";
 
 const MELONBOOKS_URL = "https://www.melonbooks.co.jp" as const;
 
 const productRoot = 'li[class^="product_"]' as const;
 const productInfo = `${productRoot} > .item-meta` as const;
 
-export const handlerConfigRegistry: HandlerConfigRegistry = [
+export const configs: [string, ExtractHandlerConfig<Scope, Prop>][] = [
   /* Switch to `page` scope. */
   ['link[rel="canonical"]', { type: "EnterScope", scope: "page" }],
 

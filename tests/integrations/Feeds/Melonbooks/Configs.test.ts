@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { DumpRenderer } from "@/Common/Utils";
 import { Emitter } from "@/Common/Emitter";
-import type { Scope, Item } from "@/Feeds/Melonbooks/Types";
+import type { Scope, Item, Prop } from "@/Feeds/Melonbooks/Types";
 import { ParserContext } from "@/Common/ParserContext";
-import { createExtractHandlers } from "@/Common/Handlers";
-import { handlerConfigRegistry } from "@/Feeds/Melonbooks/HTMLRewriterTransformerRules";
+import { configs } from "@/Feeds/Melonbooks/Configs";
+import { Transformer } from "@/Common/Transformer";
 
 import fixture from "./fixture.html";
 
@@ -12,14 +12,8 @@ describe("Melonbooks", () => {
   describe("rules", async () => {
     const emitter = new Emitter<Scope, Item>({ renderer: DumpRenderer });
     const pc = new ParserContext<Scope>("global");
-    const rewriter = new HTMLRewriter();
 
-    const handlers = createExtractHandlers({
-      emitter,
-      pc,
-      configs: handlerConfigRegistry,
-    });
-
+    const transformer = new Transformer<Scope, Prop>(emitter, pc, configs);
     const src = new Response(fixture, {
       status: 200,
       headers: {
@@ -27,13 +21,7 @@ describe("Melonbooks", () => {
       },
     });
 
-    for (const [selector, handler] of handlers) {
-      rewriter.on(selector, handler);
-    }
-
-    await rewriter.transform(src).arrayBuffer();
-
-    const payload = JSON.parse(emitter.toString());
+    const payload = JSON.parse(await transformer.transform(src));
 
     it("should extract a page URL", async () => {
       expect(payload?.page?.[0]?.pageUrl).toBe(
