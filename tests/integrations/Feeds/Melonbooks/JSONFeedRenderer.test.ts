@@ -1,10 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Emitter } from "@/Common/Emitter";
-import type { Scope, Item, Prop } from "@/Feeds/Melonbooks/Types";
 import { ParserContext } from "@/Common/ParserContext";
+import { Transformer } from "@/Common/Transformer";
 import { configs } from "@/Feeds/Melonbooks/Configs";
 import { JSONFeedRenderer } from "@/Feeds/Melonbooks/JSONFeedRenderer";
-import { Transformer } from "@/Common/Transformer";
+import type { Item, Prop, Scope } from "@/Feeds/Melonbooks/Types";
 
 import fixture from "./fixture.html";
 
