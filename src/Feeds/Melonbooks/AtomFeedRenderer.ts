@@ -18,7 +18,7 @@ export const AtomFeedRenderer: Renderer<InScopeIndexedPartialItems> = (
   <link rel="alternate" type="text/html" href="${escapeXML(pageUrl ?? "")}" />
   <link rel="self" type="application/atom+xml" href="${escapeXML(feedUrl ?? "")}"/>
   <generator url="https://github.com/nyarla/edgefeed/">
-    edgefeed - A web scraping toolkit for generating Atom or JSON Feeds on Cloudflare Workers 
+    edgefeed - A web scraping toolkit for generating Atom or JSON Feeds on Cloudflare Workers.
   </generator>
 `;
 
