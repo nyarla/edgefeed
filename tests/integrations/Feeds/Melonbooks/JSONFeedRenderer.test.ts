@@ -102,7 +102,9 @@ describe("Melonbooks", () => {
       expect(payload?.items?.length).toBeGreaterThan(0);
 
       for (const { content_html } of payload?.items ?? []) {
-        expect(content_html).toMatch(/<p><a href="[^"]+">[^<]+<\/a><\/p>/);
+        expect(content_html).toMatch(
+          /<p><a href="[^"]+"><img src="[^"]+" alt="[^"]+" height="450" \/><\/a><\/p>/,
+        );
         expect(content_html).toMatch(/<\/p> <ul>/);
         expect(content_html).toMatch(
           /<li>タイトル：<a href="[^"]+">[^<]+<\/a><\/li>/,

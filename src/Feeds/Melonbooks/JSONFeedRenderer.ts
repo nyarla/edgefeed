@@ -35,7 +35,7 @@ export const JSONFeedRenderer: Renderer<InScopeIndexedPartialItems> = (
     } = product;
 
     const html = `
-<p><a href="${productUrl ?? ""}">${productTitle ?? ""}</a></p>
+<p><a href="${productUrl}"><img src="${productThumbnail}" alt="${productTitle}" height="450" /></a></p>
 <ul>
   <li>タイトル：<a href="${productUrl ?? ""}">${productTitle ?? ""}</a></li>
   <li>作者：${productAuthor ?? ""}</li>
@@ -48,7 +48,7 @@ export const JSONFeedRenderer: Renderer<InScopeIndexedPartialItems> = (
     jsonfeed += `{
   "id": "${normalize(unescapeXML(productUrl ?? ""))}",
   "url": "${normalize(unescapeXML(productUrl ?? ""))}",
-  "title": "${normalize(productTitle ?? "")}",
+  "title": "${normalize(unescapeXML(productTitle ?? ""))}",
   "image": "${normalize(unescapeXML(productThumbnail ?? ""))}",
   "content_html": "${normalize(html)}"
 }`;
