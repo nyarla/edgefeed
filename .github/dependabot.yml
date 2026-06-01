@@ -15,6 +15,27 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    groups:
+      runtime:
+        patterns:
+          - hono
+      lint:
+        patterns:
+          - '@biomejs/*'
+          - '@commitlint/*'
+          - '@textlint-rule/*'
+          - 'oxlint'
+          - 'textlint'
+          - 'textlint-rule-*'
+      test:
+        patterns:
+          - '@cloudflare/vitest-pool-workers'
+          - 'fast-xml-parser'
+          - 'vitest'
+      development:
+        patterns:
+          - 'husky'
+          - 'wrangler'
 
   - package-ecosystem: github-actions
     directory: '/'
