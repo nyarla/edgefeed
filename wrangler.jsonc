@@ -5,12 +5,12 @@
   "compatibility_date": "2025-03-16",
   "r2_buckets": [
     {
-      "binding": "EDGEFEED_R2_CACHE_BUCKET",
+      "binding": "EDGEFEED_CACHE_R2_BUCKET",
       "bucket_name": "edgefeed-r2-cache"
     }
   ],
   "vars": {
-      "EDGEFEED_R2_CACHE_DURATION": 2000,
+      "EDGEFEED_CACHE_R2_EXPIRY": 2000,
       "EDGEFEED_TOKEN_AUTH_TOKEN": "ABC12345"
   }
   // "compatibility_flags": [
