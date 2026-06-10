@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Emitter } from "./Emitter";
 import { ParserContext } from "./ParserContext";
+import { DumpRenderer } from "./Renderer";
 import { Transformer } from "./Transformer";
-import { DumpRenderer } from "./Utils";
 
 type Scope = "root" | "parent" | "child";
 
