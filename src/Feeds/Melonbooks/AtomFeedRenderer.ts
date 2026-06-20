@@ -10,7 +10,7 @@ export const AtomFeedRenderer: Renderer<InScopeIndexedPartialItems> = (
 
   const now = new Date(Date.now()).toISOString();
 
-  let atom = `<?xml encoding="utf-8"?>
+  let atom = `<?xml version="1.0" encoding="utf-8"?>
 <atom xmlns="http://www.w3.org/2005/Atom">
   <title type="text">${escapeXML(pageTitle ?? "")}</title>
   <updated>${escapeXML(now)}</updated>
