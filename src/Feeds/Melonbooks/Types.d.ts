@@ -14,7 +14,9 @@ export type ProductProp =
 
 export type Prop = GlobalProp | PageProp | ProductProp;
 
-export type Item = Record<Prop, string>;
+export type Value = string;
+
+export type Item = Record<Prop, Value>;
 export type PartialItem = Partial<Item>;
 export type IndexedPartialItems = Map<number, PartialItem>;
 export type InScopeIndexedPartialItems = Map<Scope, IndexedPartialItems>;
