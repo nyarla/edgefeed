@@ -7,12 +7,12 @@
   ],
   "r2_buckets": [
     {
-      "binding": "EDGEFEED_R2_CACHE_BUCKET",
+      "binding": "EDGEFEED_CACHE_R2_BUCKET",
       "bucket_name": "edgefeed-melonfeed-cache"
     }
   ],
   "vars": {
-    "EDGEFEED_R2_CACHE_DURATION": 1800000
+    "EDGEFEED_CACHE_R2_EXPIRY": 1800000
   },
   "routes": [
     {
