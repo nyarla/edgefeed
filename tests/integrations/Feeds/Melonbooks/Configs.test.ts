@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { Emitter } from "@/Common/Emitter";
 import { ParserContext } from "@/Common/ParserContext";
-import { Transformer } from "@/Common/Transformer";
 import { DumpRenderer } from "@/Common/Renderer";
+import { Transformer } from "@/Common/Transformer";
 import { configs } from "@/Feeds/Melonbooks/Configs";
 import type { Item, Prop, Scope } from "@/Feeds/Melonbooks/Types";
 
