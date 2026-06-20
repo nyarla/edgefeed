@@ -3,6 +3,7 @@ export type Scope = "global" | "page" | "product";
 export type GlobalProp = "feedUrl" | "feedTitle";
 export type PageProp = "pageTitle" | "pageUrl";
 export type ProductProp =
+  | "productId"
   | "productTitle"
   | "productAuthor"
   | "productUrl"
