@@ -29,6 +29,7 @@ export const configs: [string, ExtractHandlerConfig<Scope, Prop>][] = [
 
   // Increment the product ID in this scope.
   [productRoot, { type: "IncrementScopeId" }],
+  [productRoot, { type: "StringAttribute", attr: "class", prop: "productId" }],
 
   // Extract the thumbnail URL.
   [

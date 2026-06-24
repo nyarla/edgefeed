@@ -1,60 +1,69 @@
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
+
+// Cache
+import type { CacheInterface } from "@/Cache/Cache";
+import {
+  CloudflareR2Cache,
+  CloudflareR2CacheBindings,
+} from "@/Cache/CloudflareR2Cache";
+
+// Auth
 import { createAuthenticateMiddleware } from "@/middlewares/by-name/au/Authentication";
 import {
   createTokenAuthenticator,
   type TokenAuthBindings,
 } from "@/middlewares/by-name/au/TokenAuth";
 
+// Handlers
+import { melonbooks } from "@/Feeds/Melonbooks/HonoHandlers";
 import {
-  type CloudflareR2CacheBindings,
-  createCloudflareR2CacheInitializer,
-} from "@/middlewares/by-name/re/CloudflareR2Cache";
+  createCirclePageRequest,
+  createReserveRankingRequest,
+  createArrivalsRankingRequest,
+  createNewArrivalItemsRequest,
+  createNewReserveItemsRequest,
+} from "@/Feeds/Melonbooks/Requests";
+import { AtomFeedRenderer as renderer } from "@/Feeds/Melonbooks/AtomFeedRenderer";
 
-import { createCloudflareWorkersCacheInitializer } from "@/middlewares/by-name/re/CloudflareWorkersCache";
+// Middleware
+const tokenAuth = createAuthenticateMiddleware(createTokenAuthenticator());
 
-import { createResponseCacheMiddleware } from "@/middlewares/by-name/re/ResponseCache";
+// Application
+const open = (c: Context, ns: string): CacheInterface =>
+  new CloudflareR2Cache(c, ns);
 
-import {
-  createHonoHandler,
-  type HanderOptions,
-} from "@/services/by-name/me/melonbooks/HonoHandlers";
+const contentType = "application/atom+xml" as const;
+const userAgent =
+  "Mozilla/5.0 (X11; Linux x86_64; rv:151.0) Gecko/20100101 Firefox/151.0" as const;
 
 type Bindings = {} & CloudflareR2CacheBindings & TokenAuthBindings;
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-const tokenAuth = createAuthenticateMiddleware(createTokenAuthenticator());
-
-const cloudflareWorkersCache = createResponseCacheMiddleware(
-  createCloudflareWorkersCacheInitializer(),
-);
-
-const cloudflareR2Cache = createResponseCacheMiddleware(
-  createCloudflareR2CacheInitializer(),
-);
-
-app.get("/", (c) => c.text("ok"));
-
-type kind = "circle" | "ranking" | "news";
-
-const options = (kind: kind): HanderOptions => ({
-  baseUrl: `https://melonfeed.thotep.net/${kind}/`,
-  kind,
-  format: "atom",
-  open: createCloudflareR2CacheInitializer(),
-});
-
-const handleAtom = (path: string, kind: kind) =>
+const atom = (
+  path: string,
+  createMelonbooksRequest: (id: string | number, userAgent: string) => Request,
+) =>
   app.get(
     path,
     tokenAuth,
-    cloudflareWorkersCache,
-    cloudflareR2Cache,
-    createHonoHandler(options(kind)),
+    melonbooks({
+      userAgent,
+      contentType,
+      createMelonbooksRequest,
+      renderer,
+      open,
+    }),
   );
 
-handleAtom("/circle/:id/atom", "circle");
-handleAtom("/ranking/:kind/:id/atom", "ranking");
-handleAtom("/new/:kind/:type/atom", "news");
+app.get("/", (c) => c.text("ok"));
+
+atom("/circle/:id/atom", createCirclePageRequest);
+
+atom("/ranking/:id/1/atom", createReserveRankingRequest);
+atom("/ranking/:id/2/atom", createArrivalsRankingRequest);
+
+atom("/new/:id/new/atom", createNewArrivalItemsRequest);
+atom("/new/:id/reserve/atom", createNewReserveItemsRequest);
 
 export default app;
