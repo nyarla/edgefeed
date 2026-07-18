@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { Emitter } from "@/Common/Emitter";
 import { ParserContext } from "@/Common/ParserContext";
+import { DumpRenderer } from "@/Common/Renderer";
 import { Transformer } from "@/Common/Transformer";
-import { DumpRenderer } from "@/Common/Utils";
 import { configs } from "@/Feeds/Melonbooks/Configs";
 import type { Item, Prop, Scope } from "@/Feeds/Melonbooks/Types";
 
@@ -31,6 +31,14 @@ describe("Melonbooks", () => {
 
     it("should extract a page title", () => {
       expect(payload?.page?.[0]?.pageTitle).toBe("GRINP");
+    });
+
+    it("should extract the product ID", () => {
+      expect(payload?.product?.[0]).toBeNull();
+
+      for (const { productId } of payload?.product?.slice(1) ?? []) {
+        expect(productId).toMatch(/^product_\d+$/);
+      }
     });
 
     it("should extract the thumbnail URL", () => {
